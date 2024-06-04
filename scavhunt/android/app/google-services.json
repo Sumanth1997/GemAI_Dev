@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "850910294528",
+    "project_id": "gemai-app",
+    "storage_bucket": "gemai-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850910294528:android:9b8293aea22b039e501ee5",
+        "android_client_info": {
+          "package_name": "com.example.scavhunt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwgto0x1-QrVNomLBDxRjXXjCl90XHeR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:850910294528:android:256124fc977fd531501ee5",
+        "android_client_info": {
+          "package_name": "com.gemai.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwgto0x1-QrVNomLBDxRjXXjCl90XHeR4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
