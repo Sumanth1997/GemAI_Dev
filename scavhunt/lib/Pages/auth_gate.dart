@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
+// import 'package:namer_app/Pages/difficulty_level.dart';
+import 'package:namer_app/Pages/new_game.dart';
 // import 'package:namer_app/main.dart';
 // import 'package:namer_app/main.dart';
 
 // import 'home.dart';
-import 'main.dart';
+// import 'main.dart';
 
 class AuthGate extends StatelessWidget {
  const AuthGate({super.key});
@@ -60,7 +62,7 @@ class AuthGate extends StatelessWidget {
          );
        }
       //  return const HomeScreen();
-      return MyHomePage();
+      return NewGame();
      },
    );
  }

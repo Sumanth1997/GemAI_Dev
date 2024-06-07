@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import 'auth_gate.dart';
+import 'new_game.dart';
 
 void main() async {
  WidgetsFlutterBinding.ensureInitialized();
@@ -211,6 +212,16 @@ class GeneratorPage extends StatelessWidget {
                 },
                 child: Text('Next'),
               ),
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NewGame()),
+                  );
+                },
+                child: Text('Start Game'),
+              ),
             ],
           ),
           Spacer(flex: 2),
@@ -219,6 +230,7 @@ class GeneratorPage extends StatelessWidget {
     );
   }
 }
+
 
 class BigCard extends StatelessWidget {
   const BigCard({
