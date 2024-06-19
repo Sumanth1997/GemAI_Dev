@@ -12,7 +12,20 @@
           "package_name": "com.example.scavhunt"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "850910294528-kehm3bedfdqgo3a8a71mssk9vtvn4eun.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.scavhunt",
+            "certificate_hash": "4168f1ce19ec652dc8bf17144e6835bcd30c1c75"
+          }
+        },
+        {
+          "client_id": "850910294528-ovg72gn8s7n67pogqe9jlru2gr3v1tkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAwgto0x1-QrVNomLBDxRjXXjCl90XHeR4"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850910294528-ovg72gn8s7n67pogqe9jlru2gr3v1tkd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "850910294528-feuugeanjqnooofbhntfqfe5add618kq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.scavhunt"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +56,12 @@
           "package_name": "com.gemai.dev"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "850910294528-ovg72gn8s7n67pogqe9jlru2gr3v1tkd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAwgto0x1-QrVNomLBDxRjXXjCl90XHeR4"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "850910294528-ovg72gn8s7n67pogqe9jlru2gr3v1tkd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "850910294528-feuugeanjqnooofbhntfqfe5add618kq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.scavhunt"
+              }
+            }
+          ]
         }
       }
     }

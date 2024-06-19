@@ -7,8 +7,6 @@ Future<String> callGeminiForRestaurants(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    // final apiKey = Platform.environment['AIzaSyDtJ6HffYTNKv9H0Ax0B4WuwXEMHtadj1Y'];
-    print('Loading .env file...');
     await dotenv.load();
     print('Finished loading .env file.');
 
@@ -17,8 +15,7 @@ Future<String> callGeminiForRestaurants(String location) async {
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
     }
-    // print('Sumanth\'s API Key: $apiKey');
-    // const apiKey = 'AIzaSyDtJ6HffYTNKv9H0Ax0B4WuwXEMHtadj1Y';
+    
 
     // The Gemini 1.5 models are versatile and work with most use cases
     final model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey);
@@ -69,8 +66,7 @@ Future<void> callGeminiForImages(String location) async {
 
 Future<String> callGeminiForClues(String responseRestaurants) async {
   try {
-    // Access your API key as an environment variable
-    // final apiKey = Platform.environment['AIzaSyDtJ6HffYTNKv9H0Ax0B4WuwXEMHtadj1Y'];
+   
     await dotenv.load();
     final apiKey = dotenv.env['API_KEY']?? '';
     if (apiKey.isEmpty) {

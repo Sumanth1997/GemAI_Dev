@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:namer_app/Pages/Clues.dart';
 import 'package:namer_app/Pages/Location_Print.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
-import 'package:namer_app/Pages/image_downloader_screen.dart';
 
 class DifficultyLevel extends StatelessWidget {
   const DifficultyLevel({Key? key});
@@ -122,10 +121,7 @@ class DifficultyLevel extends StatelessWidget {
                       ),
                     );
                   } else if (text == 'Inter Country') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => GeminiImageScreen()),
-                    );
+                    
                   } else if (text == 'Inter continent') {
                     // Handle 'Inter continent' navigation
                   } else if (text == 'Virtual Hunt') {
