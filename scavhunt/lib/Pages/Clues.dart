@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
+// import 'package:google_fonts/google_fonts.dart';
+// import 'package:provider/provider.dart';
 
 class CluesCard extends StatelessWidget {
   final List<List<String>> cluesList;
@@ -33,7 +35,8 @@ class Clues extends StatelessWidget {
   final int currentIndex;
   final List<List<String>> cluesList;
 
-  Clues({Key? key, required this.cluesList, required this.currentIndex}) : super(key: key);
+  Clues({Key? key, required this.cluesList, required this.currentIndex})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,8 @@ class Clues extends StatelessWidget {
           Center(
             child: Swiper(
               itemBuilder: (BuildContext context, int index) {
-                return _buildFlipCard(images[index], cluesList[index], index + 1);
+                return _buildFlipCard(
+                    images[index], cluesList[index], index + 1, context);
               },
               itemCount: cluesList.length,
               itemWidth: MediaQuery.of(context).size.width * 0.85,
@@ -73,7 +77,9 @@ class Clues extends StatelessWidget {
     );
   }
 
-  Widget _buildFlipCard(String imagePath, List<String> clues, int currentIndex) {
+  Widget _buildFlipCard(
+      String imagePath, List<String> clues, int currentIndex, BuildContext context) {
+        // print("Sumanth $clues");
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       side: CardSide.FRONT, // Ensure the front side is displayed first
@@ -99,9 +105,20 @@ class Clues extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 16),
-                for (var clue in clues)
-                  Text(clue,
-                      style: TextStyle(fontSize: 16, color: Colors.white)),
+                Row(
+                  // Changed Row for button placement
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < 3; i++) // Loop for 3 buttons
+                      Expanded(
+                        // Ensures even distribution
+                        child: ElevatedButton(
+                          onPressed: () => _showClueDialog(context, i, clues),
+                          child: Text('Clue ${i + 1}'), // Button Text
+                        ),
+                      ),
+                  ],
+                ),
                 SizedBox(height: 16),
                 Text('Click here to flip back',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
@@ -168,4 +185,23 @@ class Clues extends StatelessWidget {
       ),
     );
   }
+}
+void _showClueDialog(BuildContext context, int index,List<String> cluesList) {
+  // final cluesList = Provider.of<List<String>>(context);
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      // Your AlertDialog or Card display logic using clues[index]
+      return AlertDialog(
+        title: Text('Clue ${index + 1}'), // Use index + 1 for correct numbering
+        content: Text(cluesList[index]), // Access clue based on index
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Close'),
+          ),
+        ],
+      );
+    },
+  );
 }
