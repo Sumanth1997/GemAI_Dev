@@ -26,7 +26,8 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  String _locationMessage = "Fetching list of nearby restaurants to create a game...";
+  String _locationMessage =
+      "Fetching list of nearby restaurants to create a game...";
 
   @override
   void initState() {
@@ -63,8 +64,8 @@ class _LocationScreenState extends State<LocationScreen> {
           desiredAccuracy: LocationAccuracy.high);
 
       // Reverse geocode the coordinates
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude, position.longitude);
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
 
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
@@ -79,42 +80,54 @@ class _LocationScreenState extends State<LocationScreen> {
     }
   }
 
-  void _updateLocationMessage(String locality, String administrativeArea) async {
-  try {
-    String locationMessage = "$locality, $administrativeArea";
-    print(locationMessage);
-    String responseRestaurants = await callGeminiForRestaurants(locationMessage);
-    print(responseRestaurants);
-    String callGeminiClueResponse = await callGeminiForClues(responseRestaurants);
-    String responseWithoutBackticks = callGeminiClueResponse.replaceAll('```json', '').replaceAll('```', '');
-    Map<String, dynamic> restaurantClues = json.decode(responseWithoutBackticks);
+  void _updateLocationMessage(
+      String locality, String administrativeArea) async {
+    try {
+      String locationMessage = "$locality, $administrativeArea";
+      print(locationMessage);
+      String responseRestaurants =
+          await callGeminiForRestaurants(locationMessage);
+      print(responseRestaurants);
+      String callGeminiClueResponse =
+          await callGeminiForClues(responseRestaurants);
+      String responseWithoutBackticks = callGeminiClueResponse
+          .replaceAll('```json', '')
+          .replaceAll('```', '');
+      Map<String, dynamic> restaurantClues =
+          json.decode(responseWithoutBackticks);
+      // print("Sumanth Gemini response $restaurantClues");
+      List<List<String>> cluesList = [];
 
-    List<List<String>> cluesList = [];
+      
 
-    // Collect clues
-    restaurantClues.forEach((restaurant, clues) {
-      List<String> cluesPerRestaurant = [];
-      for (var clue in clues) {
-        cluesPerRestaurant.add(clue);
-      }
-      cluesList.add(cluesPerRestaurant);
-    });
+      List<String> restaurantList = responseRestaurants
+          .split('\n')
+          .map((restaurant) => restaurant.trim())
+          .toList();
 
-    // Navigate to CluesCard with collected clues
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CluesCard(cluesList: cluesList),
-      ),
-    );
+      // print("Sumanth printing restaurant list: $restaurantList");
 
-  } catch (e) {
-    setState(() {
-      _locationMessage = 'Error: $e';
-    });
+      // Collect clues
+      restaurantClues.forEach((restaurant, clues) {
+        List<String> cluesPerRestaurant = [];
+        for (var clue in clues) {
+          cluesPerRestaurant.add(clue);
+        }
+        cluesList.add(cluesPerRestaurant);
+      });
+      // print("Sumanth printing clues[0] : $cluesList");
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CluesCard(restaurantList: restaurantList,cluesList: cluesList),
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _locationMessage = 'Error: $e';
+      });
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {

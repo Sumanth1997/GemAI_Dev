@@ -5,16 +5,20 @@ import 'package:card_swiper/card_swiper.dart';
 // import 'package:provider/provider.dart';
 
 class CluesCard extends StatelessWidget {
+  final List<String> restaurantList;
   final List<List<String>> cluesList;
 
-  CluesCard({Key? key, required this.cluesList}) : super(key: key);
+  const CluesCard(
+      {Key? key, required this.restaurantList, required this.cluesList})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FlipCard',
       theme: ThemeData.dark(),
-      home: Clues(cluesList: cluesList, currentIndex: 0),
+      home: Clues(
+          restaurants: restaurantList, cluesList: cluesList, currentIndex: 0),
     );
   }
 }
@@ -33,9 +37,15 @@ class Clues extends StatelessWidget {
     'images/FortWayne_Downtown.png',
   ];
   final int currentIndex;
-  final List<List<String>> cluesList;
+  final List<String> restaurants; // List of restaurant names
+  final List<List<String>> cluesList; // List of clues for each restaurant
+  final TextEditingController _answerController = TextEditingController();
 
-  Clues({Key? key, required this.cluesList, required this.currentIndex})
+  Clues(
+      {Key? key,
+      required this.restaurants,
+      required this.cluesList,
+      required this.currentIndex})
       : super(key: key);
 
   @override
@@ -77,9 +87,9 @@ class Clues extends StatelessWidget {
     );
   }
 
-  Widget _buildFlipCard(
-      String imagePath, List<String> clues, int currentIndex, BuildContext context) {
-        // print("Sumanth $clues");
+  Widget _buildFlipCard(String imagePath, List<String> clues, int currentIndex,
+      BuildContext context) {
+    // print("Sumanth $clues");
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       side: CardSide.FRONT, // Ensure the front side is displayed first
@@ -117,6 +127,62 @@ class Clues extends StatelessWidget {
                           child: Text('Clue ${i + 1}'), // Button Text
                         ),
                       ),
+                  ],
+                ),
+                Row(
+                  // Changed Row for button placement
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      // Ensures even distribution
+                      child: TextField(
+                        controller: _answerController, // Assign the controller
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Enter answer for $currentIndex ',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          String userAnswer =
+                              _answerController.text; // Get user input
+                          String message;
+                          if (userAnswer == restaurants[currentIndex-1]) {
+                            // Handle correct answer (show success message, etc.)
+                            message = 'Correct!';
+                            print("Correct answer is ${restaurants[currentIndex-1]}");
+                          } else {
+                            // Handle incorrect answer (show error message, etc.)
+                            message = 'Incorrect';
+                            print("Correct answer is ${restaurants[currentIndex-1]}");
+                          }
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Result'),
+                                content: Text(message),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context), // Close dialog
+                                    child: Text('Close'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Text('Check answer'),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 16),
@@ -186,7 +252,8 @@ class Clues extends StatelessWidget {
     );
   }
 }
-void _showClueDialog(BuildContext context, int index,List<String> cluesList) {
+
+void _showClueDialog(BuildContext context, int index, List<String> cluesList) {
   // final cluesList = Provider.of<List<String>>(context);
   showDialog(
     context: context,
@@ -204,4 +271,31 @@ void _showClueDialog(BuildContext context, int index,List<String> cluesList) {
       );
     },
   );
+}
+
+class PromptCard extends StatelessWidget {
+  final String message;
+
+  const PromptCard({Key? key, required this.message}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      margin: EdgeInsets.only(top: 10.0), // Adjust margins as needed
+      decoration: BoxDecoration(
+        color: message == 'Correct!'
+            ? Colors.green
+            : Colors.red, // Set color based on message
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Text(
+        message,
+        style: TextStyle(
+          fontSize: 16.0,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
 }
