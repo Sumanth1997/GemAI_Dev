@@ -7,6 +7,7 @@ Future<String> callGeminiForRestaurants(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
+    print("Loading .env file");
     await dotenv.load();
     print('Finished loading .env file.');
 
@@ -24,9 +25,11 @@ Future<String> callGeminiForRestaurants(String location) async {
           'Return a list of top 10 rated/famous restaurants in $location. Just the names, not description and images. Also, without serial number or bullet points.')
     ];
     final response = await model.generateContent(content);
+    
     return response.text ?? '';
   } catch (e) {
     print('Failed to retrieve restaurants from $location');
+    print("Error is $e");
   }
   return 'Unexpected error occurred';
 }
@@ -81,7 +84,7 @@ Future<String> callGeminiForClues(String responseRestaurants) async {
           'I will provide a list of 10 restaurant names. For each restaurant, generate 3 location-based clues for a scavenger hunt game. The clues should be specific to the restaurant\'s immediate surroundings and not sound generic. Return the responses in JSON format. $responseRestaurants')
     ];
     final response = await model.generateContent(content);
-    
+    print(response);
     return response.text ?? '';
   } catch (e) {
     print('Failed to retrieve clues for restaurants from $responseRestaurants');

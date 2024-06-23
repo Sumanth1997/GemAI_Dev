@@ -23,7 +23,23 @@ class CluesCard extends StatelessWidget {
   }
 }
 
-class Clues extends StatelessWidget {
+class Clues extends StatefulWidget {
+  final int currentIndex;
+  final List<String> restaurants; // List of restaurant names
+  final List<List<String>> cluesList;
+
+  Clues({
+    Key? key,
+    required this.restaurants,
+    required this.cluesList,
+    required this.currentIndex,
+  }) : super(key: key);
+
+  @override
+  State<Clues> createState() => _CluesState();
+}
+
+class _CluesState extends State<Clues> {
   final List<String> images = [
     'images/FortWayne_Downtown.png',
     'images/FortWayne_Downtown.png', // Add more images if you have different ones
@@ -36,23 +52,22 @@ class Clues extends StatelessWidget {
     'images/FortWayne_Downtown.png',
     'images/FortWayne_Downtown.png',
   ];
-  final int currentIndex;
-  final List<String> restaurants; // List of restaurant names
-  final List<List<String>> cluesList; // List of clues for each restaurant
-  final TextEditingController _answerController = TextEditingController();
 
-  Clues(
-      {Key? key,
-      required this.restaurants,
-      required this.cluesList,
-      required this.currentIndex})
-      : super(key: key);
+ // List of clues for each restaurant
+  final TextEditingController _answerController = TextEditingController();
+  List<bool> isAnswerSubmittedList = List.filled(10, false);
+
+  int points = 0;
+  bool isAnswerChecked = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('FlipCard'),
+        actions: [
+          Text('Points: $points'), // Points display on top right
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -72,14 +87,15 @@ class Clues extends StatelessWidget {
             child: Swiper(
               itemBuilder: (BuildContext context, int index) {
                 return _buildFlipCard(
-                    images[index], cluesList[index], index + 1, context);
+                    images[index], widget.cluesList[index], index + 1, context);
               },
-              itemCount: cluesList.length,
+              itemCount: widget.cluesList.length,
               itemWidth: MediaQuery.of(context).size.width * 0.85,
               itemHeight: MediaQuery.of(context).size.height * 0.75,
               layout: SwiperLayout.TINDER,
               viewportFraction: 0.8,
               scale: 0.9,
+              onIndexChanged: (index) {_answerController.clear();},
             ),
           ),
         ],
@@ -90,6 +106,7 @@ class Clues extends StatelessWidget {
   Widget _buildFlipCard(String imagePath, List<String> clues, int currentIndex,
       BuildContext context) {
     // print("Sumanth $clues");
+    final _answerController = TextEditingController(text: '');
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       side: CardSide.FRONT, // Ensure the front side is displayed first
@@ -150,18 +167,25 @@ class Clues extends StatelessWidget {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: isAnswerSubmittedList[currentIndex - 1] ? null : () {
                           String userAnswer =
                               _answerController.text; // Get user input
-                          String message;
-                          if (userAnswer == restaurants[currentIndex-1]) {
+                          String message = '';
+                          if (userAnswer == widget.restaurants[currentIndex - 1]) {
                             // Handle correct answer (show success message, etc.)
-                            message = 'Correct!';
-                            print("Correct answer is ${restaurants[currentIndex-1]}");
+                            setState(() {
+                              // Call setState here to update UI within _CluesCardState
+                              points += 100;
+                              message = 'Correct!';
+                              isAnswerSubmittedList[currentIndex-1] =true;
+                            });
+                            print(
+                                "Correct answer is ${widget.restaurants[currentIndex - 1]}");
                           } else {
                             // Handle incorrect answer (show error message, etc.)
                             message = 'Incorrect';
-                            print("Correct answer is ${restaurants[currentIndex-1]}");
+                            print(
+                                "Correct answer is ${widget.restaurants[currentIndex - 1]}");
                           }
                           showDialog(
                             context: context,
