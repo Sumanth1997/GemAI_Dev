@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/Pages/drawer.dart';
 
 class ChooseCity extends StatelessWidget {
   const ChooseCity({super.key});
@@ -55,40 +56,7 @@ class ChooseCity extends StatelessWidget {
             },
           ),
         ),
-        drawer: Drawer(
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: [
-              UserAccountsDrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-                accountName: Text('John Doe'),
-                accountEmail: Text('john.doe@example.com'),
-                currentAccountPicture: CircleAvatar(
-                  backgroundImage: AssetImage('images/avatar.png'),
-                ),
-              ),
-              ListTile(
-                title: const Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: const Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app.
-                  // ...
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ),
+        drawer: MyDrawer(),
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(

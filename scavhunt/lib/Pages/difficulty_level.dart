@@ -5,7 +5,7 @@ import 'package:namer_app/Pages/Location_Print.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 
 class DifficultyLevel extends StatelessWidget {
-  const DifficultyLevel({Key? key});
+  const DifficultyLevel({Key? key, required String category});
 
   @override
   Widget build(BuildContext context) {
@@ -100,26 +100,7 @@ class DifficultyLevel extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => LocationPrint()),
                     );
                   } else if (text == 'Inter State') {
-                    // Example clues list
-                    // List<List<String>> cluesList = [
-                    //   ["Clue 1", "Clue 2", "Clue 3"],
-                    //   ["Clue 4", "Clue 5", "Clue 6"],
-                    //   ["Clue 7", "Clue 8", "Clue 9"],
-                    //   ["Clue 10", "Clue 11", "Clue 12"],
-                    //   ["Clue 13", "Clue 14", "Clue 15"],
-                    //   ["Clue 16", "Clue 17", "Clue 18"],
-                    //   ["Clue 19", "Clue 20", "Clue 21"],
-                    //   ["Clue 22", "Clue 23", "Clue 24"],
-                    //   ["Clue 25", "Clue 26", "Clue 27"],
-                    //   ["Clue 28", "Clue 29", "Clue 30"],
-                    // ];
-
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => CluesCard(cluesList: cluesList),
-                    //   ),
-                    // );
+                    
                   } else if (text == 'Inter Country') {
                     
                   } else if (text == 'Inter continent') {
