@@ -1,11 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:namer_app/Pages/Clues.dart';
-import 'package:namer_app/Pages/Location_Print.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:namer_app/Pages/Location_Print.dart'; // Import your LocationPrint widget
 import 'package:namer_app/Pages/auth_gate.dart';
 
 class DifficultyLevel extends StatelessWidget {
-  const DifficultyLevel({Key? key, required String category});
+  const DifficultyLevel({Key? key, required this.category});
+
+  final String category;
 
   @override
   Widget build(BuildContext context) {
@@ -94,20 +95,7 @@ class DifficultyLevel extends StatelessWidget {
                 text: text,
                 textStyle: itemTextStyle,
                 onTap: () {
-                  if (text == 'Inter City') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LocationPrint()),
-                    );
-                  } else if (text == 'Inter State') {
-                    
-                  } else if (text == 'Inter Country') {
-                    
-                  } else if (text == 'Inter continent') {
-                    // Handle 'Inter continent' navigation
-                  } else if (text == 'Virtual Hunt') {
-                    // Handle 'Virtual Hunt' navigation
-                  }
+                  navigateToLocationPrint(context, text);
                 },
               ),
             ),
@@ -115,6 +103,21 @@ class DifficultyLevel extends StatelessWidget {
         }).toList(),
       ),
     );
+  }
+
+  void navigateToLocationPrint(BuildContext context, String selectedText) {
+    if (selectedText == 'Inter City' ||
+        selectedText == 'Inter State' ||
+        selectedText == 'Inter Country' ||
+        selectedText == 'Inter continent' ||
+        selectedText == 'Virtual Hunt') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LocationScreen(category: category)),
+      );
+    } else {
+      // Handle other options if needed
+    }
   }
 }
 

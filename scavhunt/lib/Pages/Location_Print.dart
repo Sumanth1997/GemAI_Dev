@@ -3,31 +3,22 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:namer_app/Pages/Clues.dart';
-import 'package:namer_app/Pages/call_gemini.dart'; // Import correct file here
-
-class LocationPrint extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Location Example'),
-        ),
-        body: LocationScreen(),
-      ),
-    );
-  }
-}
+import 'package:namer_app/Pages/Clues.dart'; // Import your CluesCard widget
+import 'package:namer_app/Pages/call_gemini.dart'; // Import your callGeminiForRestaurants and callGeminiForClues methods
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class LocationScreen extends StatefulWidget {
+  final String category;
+
+  const LocationScreen({Key? key, required this.category}) : super(key: key);
+
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  String _locationMessage =
-      "Fetching list of nearby restaurants to create a game...";
+  String _locationMessage = "Fetching list of nearby locations...";
+  
 
   @override
   void initState() {
@@ -95,19 +86,13 @@ class _LocationScreenState extends State<LocationScreen> {
           .replaceAll('```', '');
       Map<String, dynamic> restaurantClues =
           json.decode(responseWithoutBackticks);
-      // print("Sumanth Gemini response $restaurantClues");
       List<List<String>> cluesList = [];
-
-      
 
       List<String> restaurantList = responseRestaurants
           .split('\n')
           .map((restaurant) => restaurant.trim())
           .toList();
 
-      // print("Sumanth printing restaurant list: $restaurantList");
-
-      // Collect clues
       restaurantClues.forEach((restaurant, clues) {
         List<String> cluesPerRestaurant = [];
         for (var clue in clues) {
@@ -115,11 +100,16 @@ class _LocationScreenState extends State<LocationScreen> {
         }
         cluesList.add(cluesPerRestaurant);
       });
-      // print("Sumanth printing clues[0] : $cluesList");
+
+      // Navigate to CluesCard with the fetched data
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CluesCard(restaurantList: restaurantList,cluesList: cluesList),
+          builder: (context) => CluesCard(
+            // category: widget.category,
+            restaurantList: restaurantList,
+            cluesList: cluesList,
+          ),
         ),
       );
     } catch (e) {
@@ -132,10 +122,16 @@ class _LocationScreenState extends State<LocationScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        _locationMessage,
-        style: TextStyle(fontSize: 24),
-      ),
+      child: _locationMessage == "Fetching list of nearby locations..."
+          ? const SpinKitFadingCircle(
+              // Use SpinKitFadingCircle as an example
+              color: Colors.blue, // Customize the color (optional)
+              size: 50.0, // Customize the size (optional)
+            )
+          : Text(
+              _locationMessage,
+              style: TextStyle(fontSize: 24,color: Colors.white),
+            ),
     );
   }
 }
