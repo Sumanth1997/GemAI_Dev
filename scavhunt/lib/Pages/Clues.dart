@@ -1,6 +1,10 @@
+// import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:provider/provider.dart';
 
@@ -53,7 +57,7 @@ class _CluesState extends State<Clues> {
     'images/FortWayne_Downtown.png',
   ];
 
- // List of clues for each restaurant
+  // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
   List<bool> isAnswerSubmittedList = List.filled(10, false);
 
@@ -62,6 +66,7 @@ class _CluesState extends State<Clues> {
 
   @override
   Widget build(BuildContext context) {
+    print("Sumanth inside Clues");
     return Scaffold(
       appBar: AppBar(
         title: Text('FlipCard'),
@@ -95,7 +100,9 @@ class _CluesState extends State<Clues> {
               layout: SwiperLayout.TINDER,
               viewportFraction: 0.8,
               scale: 0.9,
-              onIndexChanged: (index) {_answerController.clear();},
+              onIndexChanged: (index) {
+                _answerController.clear();
+              },
             ),
           ),
         ],
@@ -109,6 +116,7 @@ class _CluesState extends State<Clues> {
     final _answerController = TextEditingController(text: '');
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
+      // controller: _flipCardController,
       side: CardSide.FRONT, // Ensure the front side is displayed first
       speed: 1000,
       onFlipDone: (status) {
@@ -167,43 +175,49 @@ class _CluesState extends State<Clues> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: isAnswerSubmittedList[currentIndex - 1] ? null : () {
-                          String userAnswer =
-                              _answerController.text; // Get user input
-                          String message = '';
-                          if (userAnswer == widget.restaurants[currentIndex - 1]) {
-                            // Handle correct answer (show success message, etc.)
-                            setState(() {
-                              // Call setState here to update UI within _CluesCardState
-                              points += 100;
-                              message = 'Correct!';
-                              isAnswerSubmittedList[currentIndex-1] =true;
-                            });
-                            print(
-                                "Correct answer is ${widget.restaurants[currentIndex - 1]}");
-                          } else {
-                            // Handle incorrect answer (show error message, etc.)
-                            message = 'Incorrect';
-                            print(
-                                "Correct answer is ${widget.restaurants[currentIndex - 1]}");
-                          }
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Result'),
-                                content: Text(message),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context), // Close dialog
-                                    child: Text('Close'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
+                        onPressed: isAnswerSubmittedList[currentIndex - 1]
+                            ? null
+                            : () {
+                                String userAnswer =
+                                    _answerController.text; // Get user input
+                                String message = '';
+                                if (userAnswer ==
+                                    widget.restaurants[currentIndex - 1]) {
+                                  // Handle correct answer (show success message, etc.)
+                                  setState(() {
+                                    // Call setState here to update UI within _CluesCardState
+                                    points += 100;
+                                    message = 'Correct!';
+                                    isAnswerSubmittedList[currentIndex - 1] =
+                                        true;
+                                    // final flipCardController = FlipCardController();
+                                    // _flipCardController.toggleCard();
+                                  });
+                                  print(
+                                      "Correct answer is ${widget.restaurants[currentIndex - 1]}");
+                                } else {
+                                  // Handle incorrect answer (show error message, etc.)
+                                  message = 'Incorrect';
+                                  print(
+                                      "Correct answer is ${widget.restaurants[currentIndex - 1]}");
+                                }
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Result'),
+                                      content: Text(message),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(
+                                              context), // Close dialog
+                                          child: Text('Close'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
                         child: Text('Check answer'),
                       ),
                     ),
@@ -252,12 +266,28 @@ class _CluesState extends State<Clues> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text('Back',
-                            style:
-                                TextStyle(fontSize: 24, color: Colors.white)),
-                        Text('Click here to flip front',
-                            style:
-                                TextStyle(fontSize: 16, color: Colors.white)),
+                        if (isAnswerSubmittedList[
+                            currentIndex - 1]) // Check condition
+                          Text(
+                            '${widget.restaurants[currentIndex - 1]}', // Display answer
+                            style: GoogleFonts.dancingScript(
+                            textStyle: TextStyle(
+                              fontSize: 36,
+                              color: Colors.white,
+                            ),
+                          ),
+                          ),
+                        // Text('Back',
+                        //     style: TextStyle(fontSize: 24, color: Colors.white)),
+                        Text(
+                          DateFormat('MMMM d, y').format(DateTime.now()),
+                          style: GoogleFonts.dancingScript(
+                            textStyle: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

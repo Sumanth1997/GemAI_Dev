@@ -18,7 +18,6 @@ class LocationScreen extends StatefulWidget {
 
 class _LocationScreenState extends State<LocationScreen> {
   String _locationMessage = "Fetching list of nearby locations...";
-  
 
   @override
   void initState() {
@@ -76,11 +75,43 @@ class _LocationScreenState extends State<LocationScreen> {
     try {
       String locationMessage = "$locality, $administrativeArea";
       print(locationMessage);
-      String responseRestaurants =
-          await callGeminiForRestaurants(locationMessage);
+      String responseRestaurants;
+      int retryCount = 0; // Track retry attempts
+
+      do {
+        responseRestaurants = await callGeminiForRestaurants(locationMessage);
+        retryCount++;
+      } while (
+          // ignore: unnecessary_null_comparison
+          responseRestaurants == null && retryCount < 3); // Retry up to 3 times
+
+      // ignore: unnecessary_null_comparison
+      if (responseRestaurants == null) {
+        // Handle case where retries fail (consider more informative message)
+        print('Failed to retrieve restaurants after $retryCount retries.');
+      } else {
+        // Use the retrieved restaurants in responseRestaurants
+      }
       print(responseRestaurants);
-      String callGeminiClueResponse =
-          await callGeminiForClues(responseRestaurants);
+      // String callGeminiClueResponse =
+      //     await callGeminiForClues(responseRestaurants);
+      String callGeminiClueResponse;
+      int retryCountClues = 0; // Track retry attempts
+
+      do {
+        callGeminiClueResponse = await callGeminiForClues(responseRestaurants);
+        retryCountClues++;
+      // ignore: unnecessary_null_comparison
+      } while (callGeminiClueResponse == null &&
+          retryCountClues < 3); // Retry up to 3 times
+
+      // ignore: unnecessary_null_comparison
+      if (callGeminiClueResponse == null) {
+        // Handle case where retries fail (consider more informative message)
+        print('Failed to retrieve restaurants after $retryCountClues retries.');
+      } else {
+        // Use the retrieved restaurants in responseRestaurants
+      }
       String responseWithoutBackticks = callGeminiClueResponse
           .replaceAll('```json', '')
           .replaceAll('```', '');
@@ -100,7 +131,7 @@ class _LocationScreenState extends State<LocationScreen> {
         }
         cluesList.add(cluesPerRestaurant);
       });
-
+      print("Sumanth inside Location print");
       // Navigate to CluesCard with the fetched data
       Navigator.push(
         context,
@@ -115,6 +146,7 @@ class _LocationScreenState extends State<LocationScreen> {
     } catch (e) {
       setState(() {
         _locationMessage = 'Error: $e';
+        print("Error is $e");
       });
     }
   }
@@ -130,7 +162,7 @@ class _LocationScreenState extends State<LocationScreen> {
             )
           : Text(
               _locationMessage,
-              style: TextStyle(fontSize: 24,color: Colors.white),
+              style: TextStyle(fontSize: 24, color: Colors.white),
             ),
     );
   }
