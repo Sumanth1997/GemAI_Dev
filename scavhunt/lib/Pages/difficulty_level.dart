@@ -22,7 +22,7 @@ class DifficultyLevel extends StatelessWidget {
     final TextStyle itemTextStyle = TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
-      color: Colors.deepPurple,
+      color: Colors.white,
     );
 
     return Scaffold(
@@ -88,12 +88,32 @@ class DifficultyLevel extends StatelessWidget {
       ),
       body: Column(
         children: itemTexts.map((text) {
+          Color cardColor = Colors.grey; // Default color for other options
+
+          switch (text) {
+            case 'Virtual Hunt':
+              cardColor = Colors.brown; // Bronze
+              break;
+            case 'Inter City':
+              cardColor = const Color.fromARGB(255, 189, 189, 189); // Silver
+              break;
+            case 'Inter State':
+              cardColor = Colors.amber; // Gold
+              break;
+            case 'Inter Country':
+              cardColor = Colors.lightBlueAccent; // Diamond (light blue)
+              break;
+            case 'Inter continent':
+              cardColor = Color.fromARGB(255, 238, 5, 5); // Obsidian
+              break;
+          }
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ItemWidget(
                 text: text,
                 textStyle: itemTextStyle,
+                cardColor: cardColor,
                 onTap: () {
                   navigateToLocationPrint(context, text);
                 },
@@ -106,14 +126,40 @@ class DifficultyLevel extends StatelessWidget {
   }
 
   void navigateToLocationPrint(BuildContext context, String selectedText) {
-    if (selectedText == 'Inter City' ||
-        selectedText == 'Inter State' ||
-        selectedText == 'Inter Country' ||
-        selectedText == 'Inter continent' ||
-        selectedText == 'Virtual Hunt') {
+    if (selectedText == 'Inter City') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LocationScreen(category: category)),
+        MaterialPageRoute(
+            builder: (context) =>
+                LocationScreen(selectedText: selectedText, category: category)),
+      );
+    } else if (selectedText == 'Inter State') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                LocationScreen(selectedText: selectedText, category: category)),
+      );
+    } else if (selectedText == 'Inter Country') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                LocationScreen(selectedText: selectedText, category: category)),
+      );
+    } else if (selectedText == 'Inter continent') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                LocationScreen(selectedText: selectedText, category: category)),
+      );
+    } else if (selectedText == 'Virtual Hunt') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                LocationScreen(selectedText: selectedText, category: category)),
       );
     } else {
       // Handle other options if needed
@@ -125,14 +171,20 @@ class ItemWidget extends StatelessWidget {
   final String text;
   final TextStyle textStyle;
   final VoidCallback onTap;
+  final Color cardColor;
 
-  ItemWidget({required this.text, required this.textStyle, required this.onTap});
+  ItemWidget(
+      {required this.text,
+      required this.textStyle,
+      required this.onTap,
+      required this.cardColor});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Card(
+        color: cardColor,
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),

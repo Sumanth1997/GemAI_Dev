@@ -132,12 +132,14 @@ class _CluesState extends State<Clues> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Clues',
-                        style: TextStyle(fontSize: 24, color: Colors.white)),
-                  ],
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Clues',
+                          style: TextStyle(fontSize: 24, color: Colors.white)),
+                    ],
+                  ),
                 ),
                 SizedBox(height: 16),
                 Row(
