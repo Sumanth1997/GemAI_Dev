@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/Pages/Location_Print.dart'; // Import your LocationPrint widget
-import 'package:namer_app/Pages/auth_gate.dart';
-import 'package:namer_app/Pages/grid_list.dart';
+// import 'package:namer_app/Pages/auth_gate.dart';
+import 'package:namer_app/Pages/drawer.dart';
+// import 'package:namer_app/Pages/grid_list.dart';
 
 class DifficultyLevel extends StatelessWidget {
   const DifficultyLevel({Key? key, required this.category});
@@ -46,51 +47,7 @@ class DifficultyLevel extends StatelessWidget {
           },
         ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              accountName: Text('John Doe'),
-              accountEmail: Text('john.doe@example.com'),
-              currentAccountPicture: CircleAvatar(
-                backgroundImage: AssetImage('images/avatar.png'),
-              ),
-            ),
-            ListTile(
-              title: const Text('Item 1'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => GridList()),
-                );
-                // Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Item 2'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text('Logout'),
-              leading: Icon(Icons.logout),
-              onTap: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.pop(context); // Close the drawer
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => AuthGate()),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: AppDrawer(),
       body: Column(
         children: itemTexts.map((text) {
           Color cardColor = Colors.grey; // Default color for other options

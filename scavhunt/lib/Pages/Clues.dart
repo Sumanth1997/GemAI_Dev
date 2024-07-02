@@ -7,6 +7,7 @@ import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:namer_app/Pages/drawer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -81,6 +82,7 @@ class _CluesState extends State<Clues> {
           Text('Points: $points'), // Points display on top right
         ],
       ),
+      drawer: AppDrawer(),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[

@@ -56,7 +56,7 @@ class ChooseCity extends StatelessWidget {
             },
           ),
         ),
-        drawer: MyDrawer(),
+        drawer: AppDrawer(),
         body: LayoutBuilder(builder: (context, constraints) {
           return SingleChildScrollView(
             child: ConstrainedBox(
