@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/Pages/Location_Print.dart'; // Import your LocationPrint widget
 import 'package:namer_app/Pages/auth_gate.dart';
+import 'package:namer_app/Pages/grid_list.dart';
 
 class DifficultyLevel extends StatelessWidget {
   const DifficultyLevel({Key? key, required this.category});
@@ -62,7 +63,11 @@ class DifficultyLevel extends StatelessWidget {
             ListTile(
               title: const Text('Item 1'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => GridList()),
+                );
+                // Navigator.pop(context);
               },
             ),
             ListTile(

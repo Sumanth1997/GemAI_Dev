@@ -1,9 +1,15 @@
 // import 'package:flip_card/flip_card_controller.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:path_provider/path_provider.dart';
 
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:provider/provider.dart';
@@ -22,7 +28,7 @@ class CluesCard extends StatelessWidget {
       title: 'FlipCard',
       theme: ThemeData.dark(),
       home: Clues(
-          restaurants: restaurantList, cluesList: cluesList, currentIndex: 0),
+          restaurants: restaurantList, cluesList: cluesList, currentIndex: 0, onAnswerCorrect: (String restaurantName, String imagePath, String date) {  },),
     );
   }
 }
@@ -31,13 +37,16 @@ class Clues extends StatefulWidget {
   final int currentIndex;
   final List<String> restaurants; // List of restaurant names
   final List<List<String>> cluesList;
+  final Function(String restaurantName, String imagePath, String date)
+      onAnswerCorrect;
 
-  Clues({
-    Key? key,
-    required this.restaurants,
-    required this.cluesList,
-    required this.currentIndex,
-  }) : super(key: key);
+  Clues(
+      {Key? key,
+      required this.restaurants,
+      required this.cluesList,
+      required this.currentIndex,
+      required this.onAnswerCorrect})
+      : super(key: key);
 
   @override
   State<Clues> createState() => _CluesState();
@@ -194,6 +203,14 @@ class _CluesState extends State<Clues> {
                                         true;
                                     // final flipCardController = FlipCardController();
                                     // _flipCardController.toggleCard();
+                                    _savePoints(points);
+                                    _uploadRestaurantData(currentIndex);
+                                    widget.onAnswerCorrect(
+                                      widget.restaurants[currentIndex - 1],
+                                      'images/restaurant_${widget.restaurants[currentIndex - 1]}.png', // Replace with actual image path
+                                      DateFormat('yyyy-MM-dd').format(DateTime
+                                          .now()), // Assuming date is answer reveal date
+                                    );
                                   });
                                   print(
                                       "Correct answer is ${widget.restaurants[currentIndex - 1]}");
@@ -273,11 +290,11 @@ class _CluesState extends State<Clues> {
                           Text(
                             '${widget.restaurants[currentIndex - 1]}', // Display answer
                             style: GoogleFonts.dancingScript(
-                            textStyle: TextStyle(
-                              fontSize: 36,
-                              color: Colors.white,
+                              textStyle: TextStyle(
+                                fontSize: 36,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
                           ),
                         // Text('Back',
                         //     style: TextStyle(fontSize: 24, color: Colors.white)),
@@ -306,6 +323,57 @@ class _CluesState extends State<Clues> {
         ),
       ),
     );
+  }
+
+  Future<void> _savePoints(int points) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('points', points);
+  }
+
+  Future<int> _loadPoints() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('points') ?? 0; // Default to 0 if no points saved
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadPoints().then((loadedPoints) {
+      setState(() {
+        points = loadedPoints;
+      });
+    });
+  }
+
+  Future<void> _uploadRestaurantData(int currentIndex) async {
+    final restaurants = widget.restaurants;
+    // final cluesList = widget.cluesList;
+    final answer = restaurants[currentIndex - 1];
+    final image =
+        'images/FortWayne_Downtown.png'; // Replace with actual image path (consider using File)
+
+    final storageRef = FirebaseStorage.instance.ref();
+    final imageRef = storageRef
+        .child('restaurant_images/$answer.png'); // Create a unique filename
+
+    try {
+      final imageFile =
+          File(image); // Assuming image path points to a local file
+      await imageRef.putFile(imageFile);
+      final downloadUrl = await imageRef.getDownloadURL();
+
+      final firestore = FirebaseFirestore.instance;
+      final collectionRef = firestore.collection('restaurants');
+
+      await collectionRef.add({
+        'name': answer,
+        'image': downloadUrl,
+        'date': DateTime.now(), // Assuming date is answer reveal date
+      });
+    } on FirebaseException catch (e) {
+      // Handle upload errors
+      print(e);
+    }
   }
 }
 
