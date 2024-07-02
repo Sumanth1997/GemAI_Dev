@@ -1,6 +1,7 @@
 // import 'package:flip_card/flip_card_controller.dart';
-import 'dart:io';
+// import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
@@ -28,7 +29,7 @@ class CluesCard extends StatelessWidget {
       title: 'FlipCard',
       theme: ThemeData.dark(),
       home: Clues(
-          restaurants: restaurantList, cluesList: cluesList, currentIndex: 0, onAnswerCorrect: (String restaurantName, String imagePath, String date) {  },),
+          restaurants: restaurantList, cluesList: cluesList, currentIndex: 0),
     );
   }
 }
@@ -37,16 +38,13 @@ class Clues extends StatefulWidget {
   final int currentIndex;
   final List<String> restaurants; // List of restaurant names
   final List<List<String>> cluesList;
-  final Function(String restaurantName, String imagePath, String date)
-      onAnswerCorrect;
 
-  Clues(
-      {Key? key,
-      required this.restaurants,
-      required this.cluesList,
-      required this.currentIndex,
-      required this.onAnswerCorrect})
-      : super(key: key);
+  Clues({
+    Key? key,
+    required this.restaurants,
+    required this.cluesList,
+    required this.currentIndex,
+  }) : super(key: key);
 
   @override
   State<Clues> createState() => _CluesState();
@@ -205,12 +203,6 @@ class _CluesState extends State<Clues> {
                                     // _flipCardController.toggleCard();
                                     _savePoints(points);
                                     _uploadRestaurantData(currentIndex);
-                                    widget.onAnswerCorrect(
-                                      widget.restaurants[currentIndex - 1],
-                                      'images/restaurant_${widget.restaurants[currentIndex - 1]}.png', // Replace with actual image path
-                                      DateFormat('yyyy-MM-dd').format(DateTime
-                                          .now()), // Assuming date is answer reveal date
-                                    );
                                   });
                                   print(
                                       "Correct answer is ${widget.restaurants[currentIndex - 1]}");
@@ -345,36 +337,45 @@ class _CluesState extends State<Clues> {
     });
   }
 
-  Future<void> _uploadRestaurantData(int currentIndex) async {
+  // ... (Existing code in Clues.dart)
+
+    Future<void> _uploadRestaurantData(int currentIndex) async {
     final restaurants = widget.restaurants;
-    // final cluesList = widget.cluesList;
     final answer = restaurants[currentIndex - 1];
     final image =
         'images/FortWayne_Downtown.png'; // Replace with actual image path (consider using File)
 
-    final storageRef = FirebaseStorage.instance.ref();
-    final imageRef = storageRef
-        .child('restaurant_images/$answer.png'); // Create a unique filename
-
+    // final storageRef = FirebaseStorage.instance.ref();
+    // storageRef
+    //     .child('restaurant_images/$answer.png'); // Create a unique filename
+    final date = DateFormat('MMMM d, y').format(DateTime.now()); // Format the date as a string
+    print("Sumanth in upload restaurant data in clues");
     try {
-      final imageFile =
-          File(image); // Assuming image path points to a local file
-      await imageRef.putFile(imageFile);
-      final downloadUrl = await imageRef.getDownloadURL();
+      // final imageFile = File(image); // Assuming image path points to a local file
+      // await imageRef.putFile(imageFile);
+      // final downloadUrl = await imageRef.getDownloadURL();
 
       final firestore = FirebaseFirestore.instance;
-      final collectionRef = firestore.collection('restaurants');
+      final collectionRef =
+          firestore.collection('clues'); // Use 'clues' collection
+
+      // Get the current user (you'll need to implement user authentication)
+      final user = FirebaseAuth
+          .instance.currentUser; // Replace with your authentication logic
 
       await collectionRef.add({
-        'name': answer,
-        'image': downloadUrl,
-        'date': DateTime.now(), // Assuming date is answer reveal date
+        'answer': answer,
+        'imagePath': image,
+        'date': date, // Store the date as a string
+        'user': user?.uid ??
+            'Unknown User', // Store user ID or 'Unknown User' if not authenticated
       });
     } on FirebaseException catch (e) {
       // Handle upload errors
-      print(e);
+      print("Sumanth in upload restaurant data error is $e");
     }
   }
+
 }
 
 void _showClueDialog(BuildContext context, int index, List<String> cluesList) {
