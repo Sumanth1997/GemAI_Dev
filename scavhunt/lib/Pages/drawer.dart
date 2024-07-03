@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/grid_list.dart';
+import 'package:namer_app/Pages/tracker.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            title: const Text('Item 1'),
+            title: const Text('Card Collection'),
             onTap: () {
               Navigator.push(
                 context,
@@ -37,9 +38,12 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: const Text('Item 2'),
+            title: const Text('Heat Map'),
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Tracker()),
+              );
             },
           ),
           ListTile(

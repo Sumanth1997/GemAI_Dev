@@ -372,9 +372,41 @@ class _CluesState extends State<Clues> {
         'user': user?.uid ??
             'Unknown User', // Store user ID or 'Unknown User' if not authenticated
       });
+
+      // Update the heatmap collection
+      final date1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      await _updateHeatmapData(user?.uid, date1);
     } on FirebaseException catch (e) {
       // Handle upload errors
       print("Sumanth in upload restaurant data error is $e");
+    }
+  }
+
+  Future<void> _updateHeatmapData(String? userId, String dateString) async {
+    final firestore = FirebaseFirestore.instance;
+    final heatmapCollection = firestore.collection('heatMap');
+    final date = DateTime.parse(dateString); 
+    final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+
+    try {
+      // Check if a document for the user and date exists
+      print("Sumanth inside update heat map data");
+      final docRef = heatmapCollection.doc(userId).collection('dailyCounts').doc(formattedDate);
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        // Document exists, increment the count
+        await docRef.update({
+          'count': FieldValue.increment(1),
+        });
+      } else {
+        // Document doesn't exist, create a new document
+        await docRef.set({
+          'count': 1,
+        });
+      }
+    } catch (e) {
+      print('Error updating heatmap data: $e');
     }
   }
 
