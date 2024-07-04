@@ -3,6 +3,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 class CreateHunt extends StatefulWidget {
   const CreateHunt({Key? key}) : super(key: key);
@@ -20,11 +22,15 @@ class _CreateHuntState extends State<CreateHunt> {
   List<List<TextEditingController>> _clueTextControllers = [];
   List<TextEditingController> _answerControllers = [];
   List<File?> _huntImages = [];
+  List<TextEditingController> _pointsControllers = []; // Points controllers
+
+  String? _postalCode; // Store the postal code
 
   @override
   void initState() {
     super.initState();
     _initializeHuntData();
+    _getUserLocation(); // Get postal code on initialization
   }
 
   void _initializeHuntData() {
@@ -35,6 +41,7 @@ class _CreateHuntState extends State<CreateHunt> {
         ]);
     _answerControllers = List.generate(_numHunts, (index) => TextEditingController());
     _huntImages = List.generate(_numHunts, (index) => null);
+    _pointsControllers = List.generate(_numHunts, (index) => TextEditingController());
   }
 
   // Image Upload Function
@@ -46,6 +53,56 @@ class _CreateHuntState extends State<CreateHunt> {
       setState(() {
         _huntImages[huntIndex] = File(pickedFile.path);
       });
+    }
+  }
+
+  // Get User Location (Postal Code)
+  Future<void> _getUserLocation() async {
+    try {
+      bool serviceEnabled;
+      LocationPermission permission;
+
+      // Check if location services are enabled
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are disabled.
+        return;
+      }
+
+      // Check for location permissions
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          // Permissions are denied, so we can't request location data.
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        // Permissions are permanently denied, so we can't request location data.
+        return;
+      }
+
+      // When we reach here, permissions are granted and we can get the location.
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      // Reverse geocode the coordinates
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placemarks.isNotEmpty) {
+        Placemark place = placemarks[0];
+        setState(() {
+          _postalCode = place.postalCode;
+        });
+      } else {
+        // Handle case where location cannot be determined
+        print('Unable to determine the location.');
+      }
+    } catch (e) {
+      print('Error getting location: $e');
     }
   }
 
@@ -68,6 +125,10 @@ class _CreateHuntState extends State<CreateHunt> {
           });
         }
 
+        // Calculate total points
+        int points = int.tryParse(_pointsControllers[huntIndex].text) ?? 0;
+        int totalPoints = points + (int.tryParse(_postalCode ?? '0') ?? 0);
+
         // Add Hunt Data to Firestore
         await _firestore.collection('hunts').add({
           'title': 'Hunt ${huntIndex + 1}', // Title is now fixed
@@ -75,7 +136,8 @@ class _CreateHuntState extends State<CreateHunt> {
           'clue2Text': _clueTextControllers[huntIndex][1].text,
           'clue3Text': _clueTextControllers[huntIndex][2].text,
           'answer': _answerControllers[huntIndex].text,
-          'image': imageUrl,
+          'image': imageUrl, // Store the image URL
+          'points': totalPoints, // Store total points
         });
       }
 
@@ -182,6 +244,10 @@ class _CreateHuntState extends State<CreateHunt> {
         _buildAnswerSection(huntIndex),
         const SizedBox(height: 8.0),
 
+        // Points
+        _buildPointsSection(huntIndex),
+        const SizedBox(height: 8.0),
+
         // Image Upload
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -268,6 +334,45 @@ class _CreateHuntState extends State<CreateHunt> {
             },
             maxLines: 1, // Allow only one line
             maxLength: 30,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Helper Function to Build Points Section
+  Widget _buildPointsSection(int huntIndex) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0), // Add padding
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey), // Add border
+          borderRadius: BorderRadius.circular(8.0), // Add rounded corners
+        ),
+        padding: const EdgeInsets.all(16.0), // Add padding inside the box
+        child: SizedBox(
+          width: double.infinity, // Allow width to expand
+          child: TextFormField(
+            controller: _pointsControllers[huntIndex],
+            decoration: InputDecoration(
+              labelText: 'Points',
+              border: InputBorder.none, // Remove default border
+            ),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter points';
+              }
+              if (int.tryParse(value) == null) {
+                return 'Please enter a valid number';
+              }
+              if (int.parse(value) > 1000) {
+                return 'Maximum points allowed is 1000';
+              }
+              return null;
+            },
+            maxLines: 1, // Allow only one line
+            maxLength: 4, // Allow maximum 4 digits for points
           ),
         ),
       ),

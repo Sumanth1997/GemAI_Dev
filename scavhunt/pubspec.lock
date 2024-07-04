@@ -717,6 +717,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  image_downloader:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "2f31d7cc59a984a54b7d9d12c5819387c9fb52c1"
+      url: "https://github.com/VikasTailorbird/image_downloader"
+    source: git
+    version: "0.32.0"
   image_picker:
     dependency: "direct main"
     description:

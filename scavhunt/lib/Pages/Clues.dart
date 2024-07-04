@@ -19,6 +19,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CluesCard extends StatelessWidget {
   final List<String> restaurantList;
   final List<List<String>> cluesList;
+  
 
   const CluesCard(
       {Key? key, required this.restaurantList, required this.cluesList})
@@ -67,11 +68,12 @@ class _CluesState extends State<Clues> {
 
   // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
-  List<bool> isAnswerSubmittedList = List.filled(10, false);
+  List<bool> isAnswerSubmittedList = List.filled(5, false);
 
   int points = 0;
   bool isAnswerChecked = false;
-
+  
+  
   @override
   Widget build(BuildContext context) {
     print("Sumanth inside Clues");
@@ -103,7 +105,7 @@ class _CluesState extends State<Clues> {
                 return _buildFlipCard(
                     images[index], widget.cluesList[index], index + 1, context);
               },
-              itemCount: widget.cluesList.length,
+              itemCount: widget.restaurants.length,
               itemWidth: MediaQuery.of(context).size.width * 0.85,
               itemHeight: MediaQuery.of(context).size.height * 0.75,
               layout: SwiperLayout.TINDER,
@@ -123,6 +125,7 @@ class _CluesState extends State<Clues> {
       BuildContext context) {
     // print("Sumanth $clues");
     final _answerController = TextEditingController(text: '');
+    
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       // controller: _flipCardController,
