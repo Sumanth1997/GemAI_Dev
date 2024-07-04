@@ -369,13 +369,14 @@ class _CluesState extends State<Clues> {
         'answer': answer,
         'imagePath': image,
         'date': date, // Store the date as a string
-        'user': user?.uid ??
+        'user': user?.email ??
             'Unknown User', // Store user ID or 'Unknown User' if not authenticated
       });
 
       // Update the heatmap collection
       final date1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      await _updateHeatmapData(user?.uid, date1);
+      await _updateHeatmapData(user?.email, date1);
+      await _updateScoreboard(user?.uid, user?.email); // Pass both uid and email
     } on FirebaseException catch (e) {
       // Handle upload errors
       print("Sumanth in upload restaurant data error is $e");
@@ -407,6 +408,33 @@ class _CluesState extends State<Clues> {
       }
     } catch (e) {
       print('Error updating heatmap data: $e');
+    }
+  }
+
+  Future<void> _updateScoreboard(String? userId, String? userEmail) async {
+    final firestore = FirebaseFirestore.instance;
+    final scoreboardCollection = firestore.collection('scoreboard');
+
+    try {
+      // Check if a document for the user exists
+      final docRef = scoreboardCollection.doc(userId); // Use userId as doc ID
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        // Document exists, increment the points
+        await docRef.update({
+          'points': FieldValue.increment(100), // Increment by 100 points
+          'useremail': userEmail, // Update the useremail field
+        });
+      } else {
+        // Document doesn't exist, create a new document
+        await docRef.set({
+          'points': points, // Initial points
+          'useremail': userEmail, // Set the useremail field
+        });
+      }
+    } catch (e) {
+      print('Error updating scoreboard data: $e');
     }
   }
 

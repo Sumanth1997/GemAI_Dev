@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/grid_list.dart';
+import 'package:namer_app/Pages/scoreboard.dart';
 import 'package:namer_app/Pages/tracker.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -43,6 +44,15 @@ class AppDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Tracker()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Scoreboard'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Scoreboard()),
               );
             },
           ),
