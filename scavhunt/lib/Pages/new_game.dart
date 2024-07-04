@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/Pages/create_hunt.dart';
 import 'package:namer_app/Pages/difficulty_level.dart'; // Import your DifficultyLevel widget
 
 class NewGame extends StatefulWidget {
@@ -65,6 +66,19 @@ class _NewGameState extends State<NewGame> {
                 // );
               },
               child: const Text('Load Game'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Implement your load game logic here
+                // For example, you could navigate to a LoadGame screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateHunt(), // Replace LoadGame with your actual widget
+                  ),
+                );
+              },
+              child: const Text('Create Hunt'),
             ),
           ],
         ),
