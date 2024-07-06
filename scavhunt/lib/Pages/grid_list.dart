@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:namer_app/Pages/clue_card.dart';
 // Import for date formatting
 
 class GridList extends StatefulWidget {
@@ -68,36 +69,59 @@ class ClueGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Stack(
-        children: [
-          // Image background
-          Image.asset(
-            imagePath,
-            fit: BoxFit.cover,
-            height: double.infinity,
-            width: double.infinity,
-          ),
-          // Text overlay
-          Positioned(
-            bottom: 10.0,
-            left: 10.0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  answer,
-                  style: const TextStyle(color: Colors.white, fontSize: 18.0),
+    return GestureDetector(
+      onTap: () {
+        // Show a dialog or navigate to a new screen to display the larger card
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: SizedBox(
+                width: 300, // Set desired width
+                height: 400, // Set desired height
+                child: ClueCard(
+                  answer: answer,
+                  imagePath: imagePath,
+                  date: date,
                 ),
-                Text(
-                  date, // Display the date string directly
-                  style: const TextStyle(color: Colors.white, fontSize: 14.0),
-                ),
-              ],
+              ),
+            );
+          },
+        );
+      }, // <-- This closing parenthesis was missing
+      child: Card(
+        child: Stack(
+          children: [
+            // Image background
+            Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
             ),
-          ),
-        ],
+            // Text overlay
+            Positioned(
+              bottom: 10.0,
+              left: 10.0,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    answer,
+                    style: const TextStyle(color: Colors.white, fontSize: 18.0),
+                  ),
+                  Text(
+                    date, // Display the date string directly
+                    style: const TextStyle(color: Colors.white, fontSize: 14.0),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+

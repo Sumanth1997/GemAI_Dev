@@ -62,6 +62,7 @@ class _TrackerState extends State<Tracker> {
       appBar: AppBar(
         title: const Text('Tracker'),
       ),
+      backgroundColor: Colors.white,
       body: Center(
         child: SizedBox(
           // width: 400, // Remove the fixed width

@@ -1,6 +1,8 @@
 // import 'package:flip_card/flip_card_controller.dart';
 // import 'dart:io';
 
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
@@ -68,11 +70,12 @@ class _CluesState extends State<Clues> {
 
   // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
-  List<bool> isAnswerSubmittedList = List.filled(5, false);
+  List<bool> isAnswerSubmittedList = List.filled(10, false);
 
   int points = 0;
   bool isAnswerChecked = false;
-  
+  StreamSubscription<DocumentSnapshot>? _scoreboardSubscription; 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
   @override
   Widget build(BuildContext context) {
@@ -81,7 +84,29 @@ class _CluesState extends State<Clues> {
       appBar: AppBar(
         title: Text('FlipCard'),
         actions: [
-          Text('Points: $points'), // Points display on top right
+          // Use StreamBuilder to display points dynamically
+          StreamBuilder<DocumentSnapshot>(
+            stream: _firestore
+                .collection('scoreboard')
+                .doc(FirebaseAuth.instance.currentUser?.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('Loading...');
+              }
+
+              // Get points from the snapshot
+              int currentPoints = (snapshot.data?.data()
+                  as Map<String, dynamic>?)?['points'] ??
+                  0;
+
+              return Text('Points: $currentPoints');
+            },
+          ),
         ],
       ),
       drawer: AppDrawer(),
@@ -105,7 +130,7 @@ class _CluesState extends State<Clues> {
                 return _buildFlipCard(
                     images[index], widget.cluesList[index], index + 1, context);
               },
-              itemCount: widget.restaurants.length,
+              itemCount: widget.cluesList.length,
               itemWidth: MediaQuery.of(context).size.width * 0.85,
               itemHeight: MediaQuery.of(context).size.height * 0.75,
               layout: SwiperLayout.TINDER,
@@ -322,6 +347,36 @@ class _CluesState extends State<Clues> {
     );
   }
 
+  void _listenToScoreboardUpdates() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _scoreboardSubscription = _firestore
+          .collection('scoreboard')
+          .doc(user.uid)
+          .snapshots()
+          .listen((snapshot) {
+        if (snapshot.exists) {
+          setState(() {
+            points = (snapshot.data() as Map<String, dynamic>)['points'] ?? 0;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPoints(); // Load points from SharedPreferences
+    _listenToScoreboardUpdates(); // Start listening for scoreboard updates
+  }
+
+  @override
+  void dispose() {
+    _scoreboardSubscription?.cancel(); // Cancel the subscription when the widget is disposed
+    super.dispose();
+  }
+
   Future<void> _savePoints(int points) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('points', points);
@@ -391,11 +446,12 @@ class _CluesState extends State<Clues> {
     final heatmapCollection = firestore.collection('heatMap');
     final date = DateTime.parse(dateString); 
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-
+    final user = FirebaseAuth
+          .instance.currentUser;
     try {
-      // Check if a document for the user and date exists
-      print("Sumanth inside update heat map data");
-      final docRef = heatmapCollection.doc(userId).collection('dailyCounts').doc(formattedDate);
+      // Use userId as the document ID
+      final docRef = heatmapCollection.doc(user?.uid).collection('dailyCounts').doc(formattedDate);
+
       final docSnapshot = await docRef.get();
 
       if (docSnapshot.exists) {
