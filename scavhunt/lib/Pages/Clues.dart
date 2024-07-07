@@ -2,6 +2,7 @@
 // import 'dart:io';
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/Pages/drawer.dart';
+import 'package:namer_app/Pages/new_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -32,21 +34,28 @@ class CluesCard extends StatelessWidget {
       title: 'FlipCard',
       theme: ThemeData.dark(),
       home: Clues(
-          restaurants: restaurantList, cluesList: cluesList, currentIndex: 0),
+        restaurants: restaurantList,
+        cluesList: cluesList,
+        currentIndex: 0,
+        isAnswerSubmittedList: [],
+      ),
     );
   }
 }
 
+// ignore: must_be_immutable
 class Clues extends StatefulWidget {
   final int currentIndex;
-  final List<String> restaurants; // List of restaurant names
-  final List<List<String>> cluesList;
+  List<String> restaurants; // List of restaurant names
+  List<List<String>> cluesList;
+  final List<bool> isAnswerSubmittedList;
 
   Clues({
     Key? key,
     required this.restaurants,
     required this.cluesList,
     required this.currentIndex,
+    required this.isAnswerSubmittedList,
   }) : super(key: key);
 
   @override
@@ -69,13 +78,32 @@ class _CluesState extends State<Clues> {
 
   // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
-  List<bool> isAnswerSubmittedList = List.filled(10, false);
+
   Map<int, String?> displayedClues = {};
+  int currentGameIndex = 0;
+  // List<bool> isAnswerSubmittedList;
+  // _CluesState(List<bool> isAnswerSubmittedList);
+  late List<bool> isAnswerSubmittedList;
+  Map<int, String?> userAnswers = {};
 
   int points = 0;
   bool isAnswerChecked = false;
   StreamSubscription<DocumentSnapshot>? _scoreboardSubscription;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+   @override
+  void initState() {
+    super.initState();
+    _loadPoints(); // Load points from SharedPreferences
+    _listenToScoreboardUpdates();
+    isAnswerSubmittedList = widget.isAnswerSubmittedList;
+    // _loadGameProgress(); // Start list
+    //ening for scoreboard updates
+    if (isAnswerSubmittedList.isEmpty) {
+      isAnswerSubmittedList = List.filled(10, false);
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +112,16 @@ class _CluesState extends State<Clues> {
       appBar: AppBar(
         title: Text('FlipCard'),
         actions: [
+          IconButton(
+              onPressed: () {
+                _saveGameProgress();
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => NewGame()),
+                  (route) => false,
+                );
+              },
+              icon: Icon(Icons.home)),
           // Use StreamBuilder to display points dynamically
           StreamBuilder<DocumentSnapshot>(
             stream: _firestore
@@ -116,14 +154,6 @@ class _CluesState extends State<Clues> {
           Container(
             decoration: BoxDecoration(color: const Color(0xFFFFFFFF)),
           ),
-          MediaQuery.removePadding(
-            context: context,
-            removeBottom: true,
-            child: AppBar(
-              elevation: 0.0,
-              backgroundColor: Color(0x00FFFFFF),
-            ),
-          ),
           Center(
             child: Swiper(
               itemBuilder: (BuildContext context, int index) {
@@ -136,8 +166,15 @@ class _CluesState extends State<Clues> {
               layout: SwiperLayout.TINDER,
               viewportFraction: 0.8,
               scale: 0.9,
+              index: currentGameIndex,
               onIndexChanged: (index) {
+                setState(() {
+                  currentGameIndex =
+                      index; // Update currentGameIndex when the card changes
+                });
                 _answerController.clear();
+                displayedClues[index] = null;
+                _saveGameProgress();
               },
             ),
           ),
@@ -146,15 +183,66 @@ class _CluesState extends State<Clues> {
     );
   }
 
+  Future<void> _saveGameProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('currentGameIndex', currentGameIndex);
+
+    // Save restaurantList
+    final restaurantListJson = jsonEncode(widget.restaurants);
+    await prefs.setString('restaurantList', restaurantListJson);
+
+    // Save cluesList (This requires a bit more work as it's a List of Lists)
+    final cluesListJson = jsonEncode(
+        widget.cluesList.map((clueList) => jsonEncode(clueList)).toList());
+    await prefs.setString('cluesList', cluesListJson);
+
+    // Save isAnswerSubmittedList
+    for (int i = 0; i < isAnswerSubmittedList.length; i++) {
+      await prefs.setBool('isAnswered_$i', isAnswerSubmittedList[i]);
+    }
+  }
+
+  Future<void> _loadGameProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      currentGameIndex = prefs.getInt('currentGameIndex') ?? 0;
+
+      // Load restaurantList
+      final restaurantListJson = prefs.getString('restaurantList') ?? '[]';
+      final loadedRestaurantList = jsonDecode(restaurantListJson) as List;
+      // If you need to convert the loaded list to List<String>, you can do this:
+      widget.restaurants =
+          loadedRestaurantList.map((item) => item.toString()).toList();
+
+      // Load cluesList
+      final cluesListJson = prefs.getString('cluesList') ?? '[]';
+      final loadedCluesList = (jsonDecode(cluesListJson) as List)
+          .map((clueListJson) => (jsonDecode(clueListJson) as List)
+              .map((clue) => clue.toString())
+              .toList())
+          .toList();
+      // If you need to convert to List<List<String>>, you can do this:
+      widget.cluesList = loadedCluesList
+          .map((clueList) => clueList.map((clue) => clue.toString()).toList())
+          .toList();
+
+      // Load isAnswerSubmittedList
+      for (int i = 0; i < isAnswerSubmittedList.length; i++) {
+        isAnswerSubmittedList[i] = prefs.getBool('isAnswered_$i') ?? false;
+      }
+    });
+  }
+
   Widget _buildFlipCard(String imagePath, List<String> clues, int currentIndex,
       BuildContext context) {
-    // print("Sumanth $clues");
-    final _answerController = TextEditingController(text: '');
+    
+    final isAnswerSubmitted = widget.isAnswerSubmittedList.isNotEmpty &&
+        widget.isAnswerSubmittedList[currentIndex - 1];
 
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
-      // controller: _flipCardController,
-      side: CardSide.FRONT, // Ensure the front side is displayed first
+      side: CardSide.FRONT,
       speed: 1000,
       onFlipDone: (status) {
         print(status);
@@ -169,7 +257,6 @@ class _CluesState extends State<Clues> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // Display clue here
                 Center(
                   child: Text(
                     'Clues',
@@ -188,45 +275,34 @@ class _CluesState extends State<Clues> {
                     ),
                   ),
                 SizedBox(height: 16),
-                // Center(
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Text('Clues',
-                //           style: TextStyle(fontSize: 24, color: Colors.white)),
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(height: 16),
                 Row(
-                  // Changed Row for button placement
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    for (var i = 0; i < 3; i++) // Loop for 3 buttons
+                    for (var i = 0; i < 3; i++)
                       Expanded(
-                        // Ensures even distribution
                         child: ElevatedButton(
                           onPressed: () {
                             setState(() {
-                             displayedClues[currentIndex] = clues[i];// Update the displayed clue on button press
+                              displayedClues[currentIndex] = clues[i];
                             });
                           },
-                          child: Text('Clue ${i + 1}'), // Button Text
+                          child: Text('Clue ${i + 1}'),
                         ),
                       ),
                   ],
                 ),
                 Row(
-                  // Changed Row for button placement
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      // Ensures even distribution
                       child: TextField(
-                        controller: _answerController, // Assign the controller
+                        controller: _answerController,
+                        enabled: !isAnswerSubmitted,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: 'Enter answer for $currentIndex ',
+                          hintText: isAnswerSubmitted
+                              ? 'Already Answered'
+                              : 'Enter answer for $currentIndex',
                         ),
                       ),
                     ),
@@ -237,30 +313,26 @@ class _CluesState extends State<Clues> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: isAnswerSubmittedList[currentIndex - 1]
+                        onPressed: isAnswerSubmitted
                             ? null
                             : () {
-                                String userAnswer =
-                                    _answerController.text; // Get user input
+                                String userAnswer = _answerController.text;
                                 String message = '';
                                 if (userAnswer ==
                                     widget.restaurants[currentIndex - 1]) {
-                                  // Handle correct answer (show success message, etc.)
                                   setState(() {
-                                    // Call setState here to update UI within _CluesCardState
                                     points += 100;
                                     message = 'Correct!';
+                                    userAnswers[currentIndex] =
+                                    userAnswer;
                                     isAnswerSubmittedList[currentIndex - 1] =
                                         true;
-                                    // final flipCardController = FlipCardController();
-                                    // _flipCardController.toggleCard();
                                     _savePoints(points);
                                     _uploadRestaurantData(currentIndex);
                                   });
                                   print(
                                       "Correct answer is ${widget.restaurants[currentIndex - 1]}");
                                 } else {
-                                  // Handle incorrect answer (show error message, etc.)
                                   message = 'Incorrect';
                                   print(
                                       "Correct answer is ${widget.restaurants[currentIndex - 1]}");
@@ -273,8 +345,11 @@ class _CluesState extends State<Clues> {
                                       content: Text(message),
                                       actions: [
                                         TextButton(
-                                          onPressed: () => Navigator.pop(
-                                              context), // Close dialog
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            // After dialog is closed, update state
+                                            setState(() {});
+                                          },
                                           child: Text('Close'),
                                         ),
                                       ],
@@ -330,10 +405,9 @@ class _CluesState extends State<Clues> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        if (isAnswerSubmittedList[
-                            currentIndex - 1]) // Check condition
+                        if (isAnswerSubmittedList[currentIndex - 1] == true)
                           Text(
-                            '${widget.restaurants[currentIndex - 1]}', // Display answer
+                            '${widget.restaurants[currentIndex - 1]}',
                             style: GoogleFonts.dancingScript(
                               textStyle: TextStyle(
                                 fontSize: 36,
@@ -341,8 +415,6 @@ class _CluesState extends State<Clues> {
                               ),
                             ),
                           ),
-                        // Text('Back',
-                        //     style: TextStyle(fontSize: 24, color: Colors.white)),
                         Text(
                           DateFormat('MMMM d, y').format(DateTime.now()),
                           style: GoogleFonts.dancingScript(
@@ -387,12 +459,7 @@ class _CluesState extends State<Clues> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadPoints(); // Load points from SharedPreferences
-    _listenToScoreboardUpdates(); // Start listening for scoreboard updates
-  }
+ 
 
   @override
   void dispose() {
@@ -420,8 +487,6 @@ class _CluesState extends State<Clues> {
       });
     });
   }
-
-  // ... (Existing code in Clues.dart)
 
   Future<void> _uploadRestaurantData(int currentIndex) async {
     final restaurants = widget.restaurants;

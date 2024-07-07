@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:namer_app/Pages/Clues.dart';
 import 'package:namer_app/Pages/create_hunt.dart';
 import 'package:namer_app/Pages/difficulty_level.dart';
-import 'package:namer_app/Pages/public_hunts.dart'; // Import your DifficultyLevel widget
+import 'package:namer_app/Pages/drawer.dart';
+import 'package:namer_app/Pages/public_hunts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// Import your DifficultyLevel widget
 
 class NewGame extends StatefulWidget {
   const NewGame({Key? key}) : super(key: key);
@@ -18,6 +25,7 @@ class _NewGameState extends State<NewGame> {
         title: const Text('Welcome'),
         centerTitle: true,
       ),
+      drawer: AppDrawer(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -55,27 +63,22 @@ class _NewGameState extends State<NewGame> {
               child: const Text('Start New Game'),
             ),
             const SizedBox(height: 20), // Add some spacing between buttons
+            // In new_game.dart
+
             ElevatedButton(
-              onPressed: () {
-                // Implement your load game logic here
-                // For example, you could navigate to a LoadGame screen
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => LoadGame(), // Replace LoadGame with your actual widget
-                //   ),
-                // );
+              onPressed: () async {
+                await _loadAndNavigateToClues(context);
               },
               child: const Text('Load Game'),
             ),
+
             ElevatedButton(
               onPressed: () {
-                // Implement your load game logic here
-                // For example, you could navigate to a LoadGame screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateHunt(), // Replace LoadGame with your actual widget
+                    builder: (context) =>
+                        CreateHunt(), // Replace LoadGame with your actual widget
                   ),
                 );
               },
@@ -83,18 +86,53 @@ class _NewGameState extends State<NewGame> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Implement your load game logic here
-                // For example, you could navigate to a LoadGame screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PublicHunt(), // Replace LoadGame with your actual widget
+                    builder: (context) =>
+                        PublicHunt(), // Replace LoadGame with your actual widget
                   ),
                 );
               },
               child: const Text('Public Hunts'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _loadAndNavigateToClues(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final currentGameIndex = prefs.getInt('currentGameIndex') ?? 0;
+    final restaurantListJson = prefs.getString('restaurantList') ?? '[]';
+    final loadedRestaurantList =
+        jsonDecode(restaurantListJson) as List<dynamic>;
+    final cluesListJson = prefs.getString('cluesList') ?? '[]';
+    final loadedCluesList = (jsonDecode(cluesListJson) as List<dynamic>)
+        .map((clueListJson) => (jsonDecode(clueListJson) as List<dynamic>)
+            .map((clue) => clue.toString())
+            .toList())
+        .cast<List<String>>()
+        .toList();
+
+    // Load isAnswerSubmittedList
+    List<bool> isAnswerSubmittedList = [];
+    for (int i = 0; i < loadedRestaurantList.length; i++) {
+      isAnswerSubmittedList
+          .add(prefs.getBool('isAnswered_$i') ?? false);
+    }
+
+    // 2. Navigate to Clues, passing the loaded game data
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Clues(
+          restaurants: loadedRestaurantList.cast<String>().toList(),
+          cluesList: loadedCluesList,
+          currentIndex: currentGameIndex,
+          isAnswerSubmittedList: isAnswerSubmittedList,
         ),
       ),
     );
