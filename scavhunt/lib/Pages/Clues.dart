@@ -21,7 +21,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CluesCard extends StatelessWidget {
   final List<String> restaurantList;
   final List<List<String>> cluesList;
-  
 
   const CluesCard(
       {Key? key, required this.restaurantList, required this.cluesList})
@@ -71,12 +70,13 @@ class _CluesState extends State<Clues> {
   // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
   List<bool> isAnswerSubmittedList = List.filled(10, false);
+  Map<int, String?> displayedClues = {};
 
   int points = 0;
   bool isAnswerChecked = false;
-  StreamSubscription<DocumentSnapshot>? _scoreboardSubscription; 
+  StreamSubscription<DocumentSnapshot>? _scoreboardSubscription;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   @override
   Widget build(BuildContext context) {
     print("Sumanth inside Clues");
@@ -100,9 +100,9 @@ class _CluesState extends State<Clues> {
               }
 
               // Get points from the snapshot
-              int currentPoints = (snapshot.data?.data()
-                  as Map<String, dynamic>?)?['points'] ??
-                  0;
+              int currentPoints =
+                  (snapshot.data?.data() as Map<String, dynamic>?)?['points'] ??
+                      0;
 
               return Text('Points: $currentPoints');
             },
@@ -150,7 +150,7 @@ class _CluesState extends State<Clues> {
       BuildContext context) {
     // print("Sumanth $clues");
     final _answerController = TextEditingController(text: '');
-    
+
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       // controller: _flipCardController,
@@ -169,16 +169,35 @@ class _CluesState extends State<Clues> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                // Display clue here
                 Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Clues',
-                          style: TextStyle(fontSize: 24, color: Colors.white)),
-                    ],
+                  child: Text(
+                    'Clues',
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                 ),
                 SizedBox(height: 16),
+                if (displayedClues[currentIndex] != null)
+                  Container(
+                    padding: EdgeInsets.all(16.0),
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.height * 0.25,
+                    child: Text(
+                      displayedClues[currentIndex]!,
+                      style: TextStyle(fontSize: 18.0, color: Colors.white),
+                    ),
+                  ),
+                SizedBox(height: 16),
+                // Center(
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.center,
+                //     children: [
+                //       Text('Clues',
+                //           style: TextStyle(fontSize: 24, color: Colors.white)),
+                //     ],
+                //   ),
+                // ),
+                // SizedBox(height: 16),
                 Row(
                   // Changed Row for button placement
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +206,11 @@ class _CluesState extends State<Clues> {
                       Expanded(
                         // Ensures even distribution
                         child: ElevatedButton(
-                          onPressed: () => _showClueDialog(context, i, clues),
+                          onPressed: () {
+                            setState(() {
+                             displayedClues[currentIndex] = clues[i];// Update the displayed clue on button press
+                            });
+                          },
                           child: Text('Clue ${i + 1}'), // Button Text
                         ),
                       ),
@@ -373,7 +396,8 @@ class _CluesState extends State<Clues> {
 
   @override
   void dispose() {
-    _scoreboardSubscription?.cancel(); // Cancel the subscription when the widget is disposed
+    _scoreboardSubscription
+        ?.cancel(); // Cancel the subscription when the widget is disposed
     super.dispose();
   }
 
@@ -399,7 +423,7 @@ class _CluesState extends State<Clues> {
 
   // ... (Existing code in Clues.dart)
 
-    Future<void> _uploadRestaurantData(int currentIndex) async {
+  Future<void> _uploadRestaurantData(int currentIndex) async {
     final restaurants = widget.restaurants;
     final answer = restaurants[currentIndex - 1];
     final image =
@@ -408,7 +432,8 @@ class _CluesState extends State<Clues> {
     // final storageRef = FirebaseStorage.instance.ref();
     // storageRef
     //     .child('restaurant_images/$answer.png'); // Create a unique filename
-    final date = DateFormat('MMMM d, y').format(DateTime.now()); // Format the date as a string
+    final date = DateFormat('MMMM d, y')
+        .format(DateTime.now()); // Format the date as a string
     print("Sumanth in upload restaurant data in clues");
     try {
       // final imageFile = File(image); // Assuming image path points to a local file
@@ -434,7 +459,8 @@ class _CluesState extends State<Clues> {
       // Update the heatmap collection
       final date1 = DateFormat('yyyy-MM-dd').format(DateTime.now());
       await _updateHeatmapData(user?.email, date1);
-      await _updateScoreboard(user?.uid, user?.email); // Pass both uid and email
+      await _updateScoreboard(
+          user?.uid, user?.email); // Pass both uid and email
     } on FirebaseException catch (e) {
       // Handle upload errors
       print("Sumanth in upload restaurant data error is $e");
@@ -444,13 +470,15 @@ class _CluesState extends State<Clues> {
   Future<void> _updateHeatmapData(String? userId, String dateString) async {
     final firestore = FirebaseFirestore.instance;
     final heatmapCollection = firestore.collection('heatMap');
-    final date = DateTime.parse(dateString); 
+    final date = DateTime.parse(dateString);
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-    final user = FirebaseAuth
-          .instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     try {
       // Use userId as the document ID
-      final docRef = heatmapCollection.doc(user?.uid).collection('dailyCounts').doc(formattedDate);
+      final docRef = heatmapCollection
+          .doc(user?.uid)
+          .collection('dailyCounts')
+          .doc(formattedDate);
 
       final docSnapshot = await docRef.get();
 
@@ -496,7 +524,6 @@ class _CluesState extends State<Clues> {
       print('Error updating scoreboard data: $e');
     }
   }
-
 }
 
 void _showClueDialog(BuildContext context, int index, List<String> cluesList) {
