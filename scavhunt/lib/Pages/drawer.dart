@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:namer_app/Pages/add_friends.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/grid_list.dart';
 import 'package:namer_app/Pages/scoreboard.dart';
@@ -150,6 +151,15 @@ class _AppDrawerState extends State<AppDrawer> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => Scoreboard()),
+              );
+            },
+          ),
+          ListTile(
+            title: const Text('Friends'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddFriendsPage()),
               );
             },
           ),
