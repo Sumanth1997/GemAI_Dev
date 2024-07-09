@@ -16,6 +16,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:flutter/services.dart'; 
 
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:provider/provider.dart';
@@ -90,6 +92,7 @@ class _CluesState extends State<Clues> {
   bool isAnswerChecked = false;
   StreamSubscription<DocumentSnapshot>? _scoreboardSubscription;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final Uuid _uuid = Uuid();
 
    @override
   void initState() {
@@ -122,6 +125,12 @@ class _CluesState extends State<Clues> {
                 );
               },
               icon: Icon(Icons.home)),
+              IconButton(
+            onPressed: () {
+              _shareGame();
+            },
+            icon: Icon(Icons.share),
+          ),
           // Use StreamBuilder to display points dynamically
           StreamBuilder<DocumentSnapshot>(
             stream: _firestore
@@ -233,6 +242,39 @@ class _CluesState extends State<Clues> {
       }
     });
   }
+
+  Future<void> _shareGame() async {
+  // Generate a unique ID for the game
+  final gameId = _uuid.v4();
+
+  // Create the sharedGames collection if it doesn't exist
+  // await _firestore.collection('sharedGames').doc().set({});
+
+  // Flatten the cluesList
+  final flattenedCluesList = widget.cluesList.expand((clueList) => clueList).toList();
+
+  // Create a record in Firestore with the game ID, restaurantList, and cluesList
+  await _firestore.collection('sharedGames').doc(gameId).set({
+    'restaurantList': widget.restaurants,
+    'cluesList': flattenedCluesList,
+  });
+
+  await Clipboard.setData(ClipboardData(text: gameId));
+
+  // Display a message or navigate to a screen where the user can share the game ID
+  ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Game ID: $gameId copied to clipboard!'),
+        action: SnackBarAction(
+          label: 'Share',
+          onPressed: () {
+            // Implement your sharing logic here (e.g., using share_plus package)
+          },
+        ),
+      ),
+    );
+}
+
 
   Widget _buildFlipCard(String imagePath, List<String> clues, int currentIndex,
       BuildContext context) {
@@ -531,6 +573,8 @@ class _CluesState extends State<Clues> {
       print("Sumanth in upload restaurant data error is $e");
     }
   }
+
+  
 
   Future<void> _updateHeatmapData(String? userId, String dateString) async {
     final firestore = FirebaseFirestore.instance;

@@ -7,6 +7,7 @@ import 'package:namer_app/Pages/Clues.dart';
 import 'package:namer_app/Pages/create_hunt.dart';
 import 'package:namer_app/Pages/difficulty_level.dart';
 import 'package:namer_app/Pages/drawer.dart';
+import 'package:namer_app/Pages/join_game.dart';
 import 'package:namer_app/Pages/profile_setup.dart';
 import 'package:namer_app/Pages/public_hunts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,6 +121,17 @@ class _NewGameState extends State<NewGame> {
                 );
               },
               child: const Text('Public Hunts'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => JoinGame(),
+                  ),
+                );
+              },
+              child: const Text('Join Game'),
             ),
           ],
         ),
