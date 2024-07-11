@@ -79,7 +79,7 @@ class _CluesState extends State<Clues> {
     'images/FortWayne_Downtown.png',
     'images/FortWayne_Downtown.png',
   ];
-
+  Map<int, XFile?> _selectedImages = {};
   // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
 
@@ -437,20 +437,24 @@ class _CluesState extends State<Clues> {
                         top: Radius.circular(8.0),
                       ),
                       image: DecorationImage(
-                        image: _selectedImage != null
-                            ? FileImage(File(_selectedImage!.path))
-                            : AssetImage(imagePath) as ImageProvider<Object>,
+                        image: _selectedImages[currentIndex] != null
+                              ? FileImage(
+                                  File(_selectedImages[currentIndex]!.path))
+                              : AssetImage(imagePath) as ImageProvider<Object>,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
-                if (_selectedImage != null)
+                if (_selectedImages[currentIndex] != null)
                   Positioned(
                     top: 10.0,
                     left: 10.0,
                     child: IconButton(
-                      onPressed: _pickImage,
+                      onPressed: () {
+                        // Wrap in a function
+                        _pickImage(currentIndex);
+                      },
                       icon: Icon(Icons.edit, color: Colors.white),
                     ),
                   ),
@@ -481,7 +485,10 @@ class _CluesState extends State<Clues> {
                         ),
                         if (_selectedImage == null)
                           ElevatedButton(
-                            onPressed: _pickImage,
+                            onPressed: () {
+                              // Wrap in a function
+                              _pickImage(currentIndex);
+                            },
                             child: Text('Upload Image'),
                           ),
                       ],
@@ -502,12 +509,53 @@ class _CluesState extends State<Clues> {
     );
   }
 
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(int currentIndex) async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _selectedImage = pickedFile;
+        // Update the selected image for the specific card
+        _selectedImages[currentIndex] = pickedFile;
       });
+
+      // Upload image to Firebase Storage
+      final imageUrl = await _uploadImageToFirebase(pickedFile);
+
+      // Update the imagePath in the 'clues' collection for the current index
+      if (imageUrl != null) {
+        await _updateImagePathInFirestore(imageUrl, currentIndex);
+      }
+    }
+  }
+
+  Future<String?> _uploadImageToFirebase(XFile imageFile) async {
+    try {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('clues_images/${_uuid.v4()}.jpg'); // Unique filename
+      final uploadTask = await storageRef.putFile(File(imageFile.path));
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  Future<void> _updateImagePathInFirestore(
+      String imageUrl, int currentIndex) async {
+    final firestore = FirebaseFirestore.instance;
+    final cluesCollection = firestore.collection('clues');
+
+    // Get the document ID of the clue based on the current index
+    final querySnapshot = await cluesCollection
+        .where('answer', isEqualTo: widget.restaurants[currentIndex - 1])
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      final docId = querySnapshot.docs.first.id;
+      await cluesCollection.doc(docId).update({'imagePath': imageUrl});
+    } else {
+      print('Error: Could not find clue document to update.');
     }
   }
 
@@ -580,11 +628,24 @@ class _CluesState extends State<Clues> {
       final user = FirebaseAuth
           .instance.currentUser; // Replace with your authentication logic
 
+      // Get the image URL from the Firestore document
+      final querySnapshot =
+          await collectionRef.where('answer', isEqualTo: answer).get();
+
+      String imageUrl = image; // Default to the placeholder image
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // final docId = querySnapshot.docs.first.id;
+        final docData = querySnapshot.docs.first.data() as Map<String, dynamic>;
+        imageUrl = docData['imagePath'] ??
+            image; // Get the image URL from the document
+      }
+
       await collectionRef.add({
         'answer': answer,
-        'imagePath': image,
+        'imagePath': imageUrl, // Use the image URL from the document
         'date': date, // Store the date as a string
-        'user': user?.email ??
+        'user': user?.uid ??
             'Unknown User', // Store user ID or 'Unknown User' if not authenticated
       });
 

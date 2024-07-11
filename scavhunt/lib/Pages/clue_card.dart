@@ -35,7 +35,7 @@ class ClueCard extends StatelessWidget {
                     top: Radius.circular(8.0),
                   ),
                   image: DecorationImage(
-                    image: AssetImage(imagePath),
+                    image: NetworkImage(imagePath), // Use NetworkImage for network images
                     fit: BoxFit.cover,
                   ),
                 ),

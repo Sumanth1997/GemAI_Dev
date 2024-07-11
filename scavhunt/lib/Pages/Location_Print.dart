@@ -512,7 +512,7 @@ class _LocationScreenState extends State<LocationScreen> {
     } catch (e) {
       setState(() {
         _locationMessage = 'Error: $e';
-        print("Error is $e");
+        print("Sumanth format exception Error is $e");
       });
     }
   }

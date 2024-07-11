@@ -48,7 +48,7 @@ class _GridListState extends State<GridList> {
               final data = clue.data() as Map<String, dynamic>;
               return ClueGridCard(
                 answer: data['answer'],
-                imagePath: data['imagePath'],
+                imagePath: data['imagePath'], // Fetch image path from Firestore
                 date: data['date'], // Pass the date string directly
               );
             }).toList(),
@@ -61,7 +61,7 @@ class _GridListState extends State<GridList> {
 
 class ClueGridCard extends StatelessWidget {
   final String answer;
-  final String imagePath;
+  final String imagePath; // Now accepts String (image URL)
   final String date; // Now accepts String
 
   const ClueGridCard({
@@ -124,7 +124,7 @@ class ClueGridCard extends StatelessWidget {
                 height: 400, // Set desired height
                 child: ClueCard(
                   answer: answer,
-                  imagePath: imagePath,
+                  imagePath: imagePath, // Pass the image URL
                   date: date,
                 ),
               ),
@@ -136,11 +136,14 @@ class ClueGridCard extends StatelessWidget {
         child: Stack(
           children: [
             // Image background
-            Image.asset(
-              imagePath,
+            Image.network(
+              imagePath, // Use Image.network for network images
               fit: BoxFit.cover,
               height: double.infinity,
               width: double.infinity,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(Icons.error); // Show an error icon if the image fails to load
+              },
             ),
             // Text overlay
             Positioned(
