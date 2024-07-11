@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/Pages/clue_card.dart';
+import 'package:permission_handler/permission_handler.dart'; // Import for storage permissions
+import 'package:path_provider/path_provider.dart'; // Import for file storage
+import 'package:http/http.dart' as http; // Import for downloading files
+import 'dart:io'; // Import for file handling
 // Import for date formatting
 
 class GridList extends StatefulWidget {
@@ -67,6 +71,44 @@ class ClueGridCard extends StatelessWidget {
     required this.date,
   }) : super(key: key);
 
+  Future<void> _downloadImage(String imageUrl, String fileName, BuildContext context) async {
+    // Request storage permission
+    if (await Permission.storage.request().isGranted) {
+      try {
+        // Get the external storage directory
+        final directory = await getExternalStorageDirectory();
+        if (directory != null) {
+          final file = File('${directory.path}/$fileName');
+          final response = await http.get(Uri.parse(imageUrl));
+
+          if (response.statusCode == 200) {
+            await file.writeAsBytes(response.bodyBytes);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('$fileName downloaded successfully!')),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error downloading image')),
+            );
+          }
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('External storage not available')),
+          );
+        }
+      } catch (e) {
+        print('Error downloading image: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error downloading image')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Storage permission denied')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -116,6 +158,18 @@ class ClueGridCard extends StatelessWidget {
                     style: const TextStyle(color: Colors.white, fontSize: 14.0),
                   ),
                 ],
+              ),
+            ),
+            // Download icon
+            Positioned(
+              top: 10.0,
+              right: 10.0,
+              child: IconButton(
+                onPressed: () {
+                  final fileName = '${answer.replaceAll(' ', '_')}_$date.jpg';
+                  _downloadImage(imagePath, fileName,context);
+                },
+                icon: Icon(Icons.download, color: Colors.white),
               ),
             ),
           ],

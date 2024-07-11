@@ -3,12 +3,14 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:namer_app/Pages/drawer.dart';
 import 'package:namer_app/Pages/new_game.dart';
@@ -17,7 +19,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
 
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:provider/provider.dart';
@@ -88,13 +90,16 @@ class _CluesState extends State<Clues> {
   late List<bool> isAnswerSubmittedList;
   Map<int, String?> userAnswers = {};
 
+  XFile? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
   int points = 0;
   bool isAnswerChecked = false;
   StreamSubscription<DocumentSnapshot>? _scoreboardSubscription;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final Uuid _uuid = Uuid();
 
-   @override
+  @override
   void initState() {
     super.initState();
     _loadPoints(); // Load points from SharedPreferences
@@ -105,7 +110,6 @@ class _CluesState extends State<Clues> {
     if (isAnswerSubmittedList.isEmpty) {
       isAnswerSubmittedList = List.filled(10, false);
     }
-    
   }
 
   @override
@@ -125,7 +129,7 @@ class _CluesState extends State<Clues> {
                 );
               },
               icon: Icon(Icons.home)),
-              IconButton(
+          IconButton(
             onPressed: () {
               _shareGame();
             },
@@ -244,25 +248,26 @@ class _CluesState extends State<Clues> {
   }
 
   Future<void> _shareGame() async {
-  // Generate a unique ID for the game
-  final gameId = _uuid.v4();
+    // Generate a unique ID for the game
+    final gameId = _uuid.v4();
 
-  // Create the sharedGames collection if it doesn't exist
-  // await _firestore.collection('sharedGames').doc().set({});
+    // Create the sharedGames collection if it doesn't exist
+    // await _firestore.collection('sharedGames').doc().set({});
 
-  // Flatten the cluesList
-  final flattenedCluesList = widget.cluesList.expand((clueList) => clueList).toList();
+    // Flatten the cluesList
+    final flattenedCluesList =
+        widget.cluesList.expand((clueList) => clueList).toList();
 
-  // Create a record in Firestore with the game ID, restaurantList, and cluesList
-  await _firestore.collection('sharedGames').doc(gameId).set({
-    'restaurantList': widget.restaurants,
-    'cluesList': flattenedCluesList,
-  });
+    // Create a record in Firestore with the game ID, restaurantList, and cluesList
+    await _firestore.collection('sharedGames').doc(gameId).set({
+      'restaurantList': widget.restaurants,
+      'cluesList': flattenedCluesList,
+    });
 
-  await Clipboard.setData(ClipboardData(text: gameId));
+    await Clipboard.setData(ClipboardData(text: gameId));
 
-  // Display a message or navigate to a screen where the user can share the game ID
-  ScaffoldMessenger.of(context).showSnackBar(
+    // Display a message or navigate to a screen where the user can share the game ID
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Game ID: $gameId copied to clipboard!'),
         action: SnackBarAction(
@@ -273,12 +278,10 @@ class _CluesState extends State<Clues> {
         ),
       ),
     );
-}
-
+  }
 
   Widget _buildFlipCard(String imagePath, List<String> clues, int currentIndex,
       BuildContext context) {
-    
     final isAnswerSubmitted = widget.isAnswerSubmittedList.isNotEmpty &&
         widget.isAnswerSubmittedList[currentIndex - 1];
 
@@ -365,8 +368,7 @@ class _CluesState extends State<Clues> {
                                   setState(() {
                                     points += 100;
                                     message = 'Correct!';
-                                    userAnswers[currentIndex] =
-                                    userAnswer;
+                                    userAnswers[currentIndex] = userAnswer;
                                     isAnswerSubmittedList[currentIndex - 1] =
                                         true;
                                     _savePoints(points);
@@ -435,12 +437,23 @@ class _CluesState extends State<Clues> {
                         top: Radius.circular(8.0),
                       ),
                       image: DecorationImage(
-                        image: AssetImage(imagePath),
+                        image: _selectedImage != null
+                            ? FileImage(File(_selectedImage!.path))
+                            : AssetImage(imagePath) as ImageProvider<Object>,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
+                if (_selectedImage != null)
+                  Positioned(
+                    top: 10.0,
+                    left: 10.0,
+                    child: IconButton(
+                      onPressed: _pickImage,
+                      icon: Icon(Icons.edit, color: Colors.white),
+                    ),
+                  ),
                 Expanded(
                   flex: 1,
                   child: Center(
@@ -466,6 +479,11 @@ class _CluesState extends State<Clues> {
                             ),
                           ),
                         ),
+                        if (_selectedImage == null)
+                          ElevatedButton(
+                            onPressed: _pickImage,
+                            child: Text('Upload Image'),
+                          ),
                       ],
                     ),
                   ),
@@ -484,6 +502,15 @@ class _CluesState extends State<Clues> {
     );
   }
 
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = pickedFile;
+      });
+    }
+  }
+
   void _listenToScoreboardUpdates() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -500,8 +527,6 @@ class _CluesState extends State<Clues> {
       });
     }
   }
-
- 
 
   @override
   void dispose() {
@@ -573,8 +598,6 @@ class _CluesState extends State<Clues> {
       print("Sumanth in upload restaurant data error is $e");
     }
   }
-
-  
 
   Future<void> _updateHeatmapData(String? userId, String dateString) async {
     final firestore = FirebaseFirestore.instance;
