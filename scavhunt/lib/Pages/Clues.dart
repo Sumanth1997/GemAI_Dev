@@ -12,6 +12,7 @@ import 'package:card_swiper/card_swiper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:namer_app/Pages/drawer.dart';
 import 'package:namer_app/Pages/new_game.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -404,6 +405,18 @@ class _CluesState extends State<Clues> {
                         child: Text('Check answer'),
                       ),
                     ),
+                    SizedBox(width: 16), // Add a gap between buttons
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: isAnswerSubmittedList[currentIndex - 1]
+                            ? () {
+                                _GetThereMaps(currentIndex -
+                                    1); // Call _GetThereMaps when the button is pressed
+                              }
+                            : null,
+                        child: const Text('Get There'),
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 16),
@@ -438,9 +451,9 @@ class _CluesState extends State<Clues> {
                       ),
                       image: DecorationImage(
                         image: _selectedImages[currentIndex] != null
-                              ? FileImage(
-                                  File(_selectedImages[currentIndex]!.path))
-                              : AssetImage(imagePath) as ImageProvider<Object>,
+                            ? FileImage(
+                                File(_selectedImages[currentIndex]!.path))
+                            : AssetImage(imagePath) as ImageProvider<Object>,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -524,6 +537,21 @@ class _CluesState extends State<Clues> {
       if (imageUrl != null) {
         await _updateImagePathInFirestore(imageUrl, currentIndex);
       }
+    }
+  }
+
+  Future<void> _GetThereMaps(int currentIndex) async {
+    // Get the restaurant name and address from your data
+    final restaurantName = widget.restaurants[currentIndex];
+    final restaurantAddress =
+        'Address of the restaurant'; // Replace with actual address
+
+    // Use the maps_launcher package to open the maps app
+    try {
+      await MapsLauncher.launchQuery(restaurantName);
+    } catch (e) {
+      print('Error launching maps: $e');
+      // Handle the error (e.g., show an error message to the user)
     }
   }
 
