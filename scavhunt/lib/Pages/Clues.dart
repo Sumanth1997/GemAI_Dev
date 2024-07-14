@@ -411,7 +411,7 @@ class _CluesState extends State<Clues> {
                         onPressed: isAnswerSubmittedList[currentIndex - 1]
                             ? () {
                                 _GetThereMaps(currentIndex -
-                                    1); // Call _GetThereMaps when the button is pressed
+                                    1,widget.restaurants[currentIndex - 1]); // Call _GetThereMaps when the button is pressed
                               }
                             : null,
                         child: const Text('Get There'),
@@ -540,15 +540,15 @@ class _CluesState extends State<Clues> {
     }
   }
 
-  Future<void> _GetThereMaps(int currentIndex) async {
+  Future<void> _GetThereMaps(int currentIndex, String restaurant) async {
     // Get the restaurant name and address from your data
-    final restaurantName = widget.restaurants[currentIndex];
-    final restaurantAddress =
+    // final restaurantName = widget.restaurants[currentIndex];
+    // final restaurantAddress =
         'Address of the restaurant'; // Replace with actual address
-
+    print('Directions to $restaurant');
     // Use the maps_launcher package to open the maps app
     try {
-      await MapsLauncher.launchQuery(restaurantName);
+      await MapsLauncher.launchQuery('directions to $restaurant');
     } catch (e) {
       print('Error launching maps: $e');
       // Handle the error (e.g., show an error message to the user)
