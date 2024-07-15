@@ -169,7 +169,7 @@ class _NewGameState extends State<NewGame> {
           restaurants: loadedRestaurantList.cast<String>().toList(),
           cluesList: loadedCluesList,
           currentIndex: currentGameIndex,
-          isAnswerSubmittedList: isAnswerSubmittedList,
+          isAnswerSubmittedList: isAnswerSubmittedList, difficulty_level: '',
         ),
       ),
     );

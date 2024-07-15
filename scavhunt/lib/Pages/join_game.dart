@@ -58,6 +58,7 @@ class _JoinGameState extends State<JoinGame> {
     if (gameDoc.exists) {
       final restaurantList = List<String>.from(gameDoc.data()!['restaurantList']);
       final flattenedCluesList = List<String>.from(gameDoc.data()!['cluesList']);
+      final difficulty_level = gameDoc.data()!['difficulty_level'];
 
       // Reconstruct the cluesList from the flattened array
       final List<List<String>> cluesList = [];
@@ -76,7 +77,8 @@ class _JoinGameState extends State<JoinGame> {
             restaurants: restaurantList,
             cluesList: cluesList, // Now passing a List<List<String>>
             currentIndex: 0,
-            isAnswerSubmittedList: [], // Initialize isAnswerSubmittedList
+            isAnswerSubmittedList: [],
+            difficulty_level: difficulty_level, // Initialize isAnswerSubmittedList
           ),
         ),
       );

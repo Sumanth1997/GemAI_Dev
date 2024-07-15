@@ -73,6 +73,7 @@ class _LocationScreenState extends State<LocationScreen> {
           if (selectedText == 'Inter City') {
             interCityHunt(place.locality!, place.administrativeArea!);
           } else if (selectedText == 'Virtual Hunt') {
+            interCityHunt(place.locality!, place.administrativeArea!);
           } else if (selectedText == 'Inter State') {
             interStateHunt(place.administrativeArea!);
           } else if (selectedText == 'Inter Country') {
@@ -84,6 +85,7 @@ class _LocationScreenState extends State<LocationScreen> {
           if (selectedText == 'Inter City') {
             interCityTouristHunt(place.locality!, place.administrativeArea!);
           } else if (selectedText == 'Virtual Hunt') {
+            interCityTouristHunt(place.locality!, place.administrativeArea!);
           } else if (selectedText == 'Inter State') {
             interStateTouristHunt(place.administrativeArea!);
           } else if (selectedText == 'Inter Country') {
@@ -177,7 +179,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -265,7 +267,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -352,7 +354,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -441,7 +443,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -528,7 +530,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -634,7 +636,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -724,7 +726,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -814,7 +816,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),
@@ -904,7 +906,7 @@ class _LocationScreenState extends State<LocationScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => CluesCard(
-            // category: widget.category,
+            difficulty_level: widget.selectedText,
             restaurantList: restaurantList,
             cluesList: cluesList,
           ),

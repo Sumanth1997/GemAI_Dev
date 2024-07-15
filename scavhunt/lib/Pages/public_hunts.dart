@@ -65,7 +65,7 @@ class _PublicHuntState extends State<PublicHunt> {
                       MaterialPageRoute(
                         builder: (context) => CluesCard(
                           restaurantList: answerList, // Pass the answer list
-                          cluesList: [cluesList], // Wrap cluesList in a list
+                          cluesList: [cluesList], difficulty_level: '', // Wrap cluesList in a list
                         ),
                       ),
                     );
