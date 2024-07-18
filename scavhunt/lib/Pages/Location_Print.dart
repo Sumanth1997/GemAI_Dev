@@ -537,7 +537,7 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
       );
     } catch (e) {
-     if (e is FormatException) {
+      if (e is FormatException) {
         print('Error parsing JSON: $e');
         // Display an error message to the user
         setState(() {
@@ -643,7 +643,7 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
       );
     } catch (e) {
-     if (e is FormatException) {
+      if (e is FormatException) {
         print('Error parsing JSON: $e');
         // Display an error message to the user
         setState(() {
@@ -823,7 +823,7 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
       );
     } catch (e) {
-    if (e is FormatException) {
+      if (e is FormatException) {
         print('Error parsing JSON: $e');
         // Display an error message to the user
         setState(() {
@@ -933,12 +933,12 @@ class _LocationScreenState extends State<LocationScreen> {
     print(callGeminiClueResponse);
     print(responseTouristPlaces);
 
-    try {
-      // Get the application documents directory
-      final directory = await getApplicationDocumentsDirectory();
+    // import 'dart:io';
 
-      // Define the directory path for logs
-      final logsDirectoryPath = '${directory.path}/logs';
+    try {
+      // Define the local folder path for logs on your MacBook
+      final logsDirectoryPath =
+          '/Users/sumanthmylar/sumanthmylar/logs';
 
       // Create the logs directory if it doesn't exist
       final logsDirectory = Directory(logsDirectoryPath);

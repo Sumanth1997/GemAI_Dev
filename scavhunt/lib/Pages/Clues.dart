@@ -62,14 +62,14 @@ class Clues extends StatefulWidget {
 
   final String difficulty_level;
 
-  Clues({
-    Key? key,
-    required this.restaurants,
-    required this.cluesList,
-    required this.currentIndex,
-    required this.isAnswerSubmittedList,
-    required this.difficulty_level
-  }) : super(key: key);
+  Clues(
+      {Key? key,
+      required this.restaurants,
+      required this.cluesList,
+      required this.currentIndex,
+      required this.isAnswerSubmittedList,
+      required this.difficulty_level})
+      : super(key: key);
 
   @override
   State<Clues> createState() => _CluesState();
@@ -294,7 +294,7 @@ class _CluesState extends State<Clues> {
       BuildContext context) {
     final isAnswerSubmitted = widget.isAnswerSubmittedList.isNotEmpty &&
         widget.isAnswerSubmittedList[currentIndex - 1];
-      print("Sumanth printing category ${widget.difficulty_level}");
+    print("Sumanth printing category ${widget.difficulty_level}");
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       side: CardSide.FRONT,
@@ -364,78 +364,103 @@ class _CluesState extends State<Clues> {
                   ],
                 ),
                 Column(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: isAnswerSubmitted
-                ? null
-                : () {
-                    String userAnswer = _answerController.text;
-                    String message = '';
-                    if (userAnswer == widget.restaurants[currentIndex - 1]) {
-                      setState(() {
-                        points += 100;
-                        message = 'Correct!';
-                        userAnswers[currentIndex] = userAnswer;
-                        isAnswerSubmittedList[currentIndex - 1] = true;
-                        _savePoints(points);
-                        _uploadRestaurantData(currentIndex);
-                      });
-                      print("Correct answer is ${widget.restaurants[currentIndex - 1]}");
-                    } else {
-                      message = 'Incorrect';
-                      print("Correct answer is ${widget.restaurants[currentIndex - 1]}");
-                    }
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Result'),
-                          content: Text(message),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                // After dialog is closed, update state
-                                setState(() {});
-                              },
-                              child: Text('Close'),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: isAnswerSubmitted
+                                ? null
+                                : () {
+                                    String userAnswer = _answerController.text;
+                                    String message = '';
+                                    if (userAnswer ==
+                                        widget.restaurants[currentIndex - 1]) {
+                                      setState(() {
+                                        points += 100;
+                                        message = 'Correct!';
+                                        userAnswers[currentIndex] = userAnswer;
+                                        isAnswerSubmittedList[
+                                            currentIndex - 1] = true;
+                                        _savePoints(points);
+                                        _uploadRestaurantData(currentIndex);
+                                      });
+                                      print(
+                                          "Correct answer is ${widget.restaurants[currentIndex - 1]}");
+                                    } else {
+                                      message = 'Incorrect';
+                                      print(
+                                          "Correct answer is ${widget.restaurants[currentIndex - 1]}");
+                                    }
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Result'),
+                                          content: Text(message),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                // After dialog is closed, update state
+                                                setState(() {});
+                                              },
+                                              child: Text('Close'),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                            child: Text('Check answer'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16), // Add a gap between buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Visibility(
+                            visible: widget.difficulty_level != 'Virtual Hunt',
+                            child: ElevatedButton(
+                              onPressed: isAnswerSubmittedList[currentIndex - 1]
+                                  ? () {
+                                      _GetThereMaps(currentIndex - 1,
+                                          widget.restaurants[currentIndex - 1]);
+                                    }
+                                  : null,
+                              child: const Text('Get There'),
                             ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-            child: Text('Check answer'),
-          ),
-        ),
-      ],
-    ),
-    SizedBox(height: 16), // Add a gap between buttons
-    Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Expanded(
-          child: Visibility(
-            visible: widget.difficulty_level != 'Virtual Hunt',
-            child: ElevatedButton(
-              onPressed: isAnswerSubmittedList[currentIndex - 1]
-                  ? () {
-                      _GetThereMaps(currentIndex - 1, widget.restaurants[currentIndex - 1]);
-                    }
-                  : null,
-              child: const Text('Get There'),
-            ),
-          ),
-        ),
-      ],
-    ),
-  ],
-),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16), // Add a gap between buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Visibility(
+                            visible: widget.difficulty_level != 'Virtual Hunt',
+                            child: ElevatedButton(
+                              onPressed: isAnswerSubmittedList[currentIndex - 1]
+                                  ? () {
+                                      _GetThereMaps(currentIndex - 1,
+                                          widget.restaurants[currentIndex - 1]);
+                                    }
+                                  : null,
+                              child: const Text('Upload receipt'),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
                 SizedBox(height: 16),
                 Text('Click here to flip back',
                     style: TextStyle(fontSize: 16, color: Colors.white)),
