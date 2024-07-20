@@ -936,9 +936,9 @@ class _LocationScreenState extends State<LocationScreen> {
     // import 'dart:io';
 
     try {
-      // Define the local folder path for logs on your MacBook
-      final logsDirectoryPath =
-          '/Users/sumanthmylar/sumanthmylar/logs';
+      // Get the temporary directory
+      final directory = await getTemporaryDirectory();
+      final logsDirectoryPath = '${directory.path}/logs';
 
       // Create the logs directory if it doesn't exist
       final logsDirectory = Directory(logsDirectoryPath);

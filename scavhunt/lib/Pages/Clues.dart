@@ -4,7 +4,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
+import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
@@ -92,6 +94,7 @@ class _CluesState extends State<Clues> {
   // List of clues for each restaurant
   final TextEditingController _answerController = TextEditingController();
 
+  late ConfettiController _confettiController;
   Map<int, String?> displayedClues = {};
   int currentGameIndex = 0;
   // List<bool> isAnswerSubmittedList;
@@ -119,11 +122,15 @@ class _CluesState extends State<Clues> {
     if (isAnswerSubmittedList.isEmpty) {
       isAnswerSubmittedList = List.filled(10, false);
     }
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 10), // Adjust duration as needed
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     print("Sumanth inside Clues");
+    print("Sumanth printing answer submit list $isAnswerSubmittedList");
     return Scaffold(
       appBar: AppBar(
         title: Text('FlipCard'),
@@ -198,6 +205,26 @@ class _CluesState extends State<Clues> {
                 displayedClues[index] = null;
                 _saveGameProgress();
               },
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirection: -pi / 2, // Adjust direction as needed
+              blastDirectionality: BlastDirectionality.explosive,
+              emissionFrequency: 0.05, // Adjust frequency as needed
+              numberOfParticles: 20, // Adjust number of particles as needed
+              gravity: 0.05, // Adjust gravity as needed
+            ),
+          ),
+          Visibility(
+            visible: isAnswerSubmittedList.every(
+                (isAnswered) => isAnswered), // Check if all entries are true
+            child: Center(
+              child: CongratulationsBanner(
+                confettiController: _confettiController,
+              ), // Your banner widget
             ),
           ),
         ],
@@ -650,6 +677,7 @@ class _CluesState extends State<Clues> {
   void dispose() {
     _scoreboardSubscription
         ?.cancel(); // Cancel the subscription when the widget is disposed
+    _confettiController.dispose();
     super.dispose();
   }
 
@@ -831,6 +859,38 @@ class PromptCard extends StatelessWidget {
           fontSize: 16.0,
           color: Colors.white,
         ),
+      ),
+    );
+  }
+}
+
+class CongratulationsBanner extends StatelessWidget {
+  final ConfettiController confettiController; // Receive the controller
+
+  const CongratulationsBanner({Key? key, required this.confettiController})
+      : super(key: key);
+  void play() {
+    confettiController.play(); // Start the confetti animation
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    confettiController.play(); 
+    return Container(
+      color: Colors.transparent,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Text(
+            'Congratulations!',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          // ... other banner elements
+        ],
       ),
     );
   }
