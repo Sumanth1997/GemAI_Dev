@@ -116,56 +116,81 @@ class _LocationScreenState extends State<LocationScreen> {
     try {
       String locationMessage = "$locality, $administrativeArea";
       print(locationMessage);
-      String responseRestaurants;
+      String? responseRestaurants;
       int retryCount = 0; // Track retry attempts
 
       do {
         responseRestaurants = await callGeminiForRestaurants(locationMessage);
+        print("Sumanth debug restaurants $responseRestaurants");
         retryCount++;
       } while (
-          // ignore: unnecessary_null_comparison
-          responseRestaurants == null && retryCount < 3); // Retry up to 3 times
+          responseRestaurants.isEmpty && retryCount < 3); // Retry up to 3 times
 
-      // ignore: unnecessary_null_comparison
-      if (responseRestaurants == null) {
-        // Handle case where retries fail (consider more informative message)
+      if (responseRestaurants.isEmpty) {
+        // Handle case where retries fail
         print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return; // Stop execution if responseRestaurants is null
       }
-      print(responseRestaurants);
-      // String callGeminiClueResponse =
-      //     await callGeminiForClues(responseRestaurants);
-      String callGeminiClueResponse;
-      int retryCountClues = 0; // Track retry attempts
+      // print(responseRestaurants);
 
-      do {
-        callGeminiClueResponse = await callGeminiForClues(responseRestaurants);
-        retryCountClues++;
-        _writeErrorDetailsToFile(callGeminiClueResponse, responseRestaurants);
-        // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
-          retryCountClues < 3); // Retry up to 3 times
+      String? callGeminiClueResponse;
+      // int retryCountClues = 0; // Track retry attempts
 
-      // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
-        // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+      callGeminiClueResponse = await callGeminiForClues(responseRestaurants);
+      // print("Sumanth debug clues |$callGeminiClueResponse|");
+      // retryCountClues++;
+      if (callGeminiClueResponse.isNotEmpty) {
+        int chunkSize = 1000; // Customize the chunk size as needed
+        for (int i = 0; i < callGeminiClueResponse.length; i += chunkSize) {
+          int end = (i + chunkSize < callGeminiClueResponse.length)
+              ? i + chunkSize
+              : callGeminiClueResponse.length;
+          print("Sumanth debug clues");
+          print(callGeminiClueResponse.substring(i, end));
+        }
       }
-      String responseWithoutBackticks = callGeminiClueResponse
-          .replaceAll('```json', '')
-          .replaceAll('```', '');
-      Map<String, dynamic> restaurantClues =
-          json.decode(responseWithoutBackticks);
+      // _writeErrorDetailsToFile(callGeminiClueResponse, responseRestaurants);
+
+      if (callGeminiClueResponse.isEmpty) {
+        // Handle case where retries fail
+        // print('Failed to retrieve clues after $retryCountClues retries.');
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return; // Stop execution if callGeminiClueResponse is null
+      }
+
+      print("Sumanth debug JSON error point 1");
+      // String responseWithoutBackticks = callGeminiClueResponse
+      //     .replaceAll('```json', '')
+      //     .replaceAll('```', '');
+
+      print("Sumanth debug JSON error point 1.1");
+      if (callGeminiClueResponse.isEmpty) {
+        print("Sumanth debug before 1.2 clues response is null");
+      }
+      print("Sumanth debug 1.2 |$callGeminiClueResponse|");
+      Map<String, dynamic> restaurantClues;
+      try {
+        restaurantClues = json.decode(callGeminiClueResponse);
+      } catch (e) {
+        print('Error parsing JSON: $e');
+        setState(() {});
+        return;
+      }
+
       List<List<String>> cluesList = [];
+      print("Sumanth debug JSON error point 2");
 
       List<String> restaurantList = responseRestaurants
           .split('\n')
           .map((restaurant) => restaurant.trim())
           .toList();
 
+      print("Sumanth debug JSON error point 3");
       restaurantClues.forEach((restaurant, clues) {
         List<String> cluesPerRestaurant = [];
         for (var clue in clues) {
@@ -173,7 +198,10 @@ class _LocationScreenState extends State<LocationScreen> {
         }
         cluesList.add(cluesPerRestaurant);
       });
+
+      print("Sumanth debug JSON error point 4");
       print("Sumanth inside Location print");
+
       // Navigate to CluesCard with the fetched data
       Navigator.push(
         context,
@@ -186,16 +214,9 @@ class _LocationScreenState extends State<LocationScreen> {
         ),
       );
     } catch (e) {
-      if (e is FormatException) {
-        print('Error parsing JSON: $e');
-        // Display an error message to the user
-        setState(() {
-          _locationMessage = 'Error loading data. Please try again.';
-        });
-      } else {
-        print('Error: $e');
-        // Handle other potential errors
-      }
+      print('Error: $e');
+      // Handle other potential errors
+      setState(() {});
     }
   }
 
@@ -212,14 +233,15 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseRestaurants == null && retryCount < 3); // Retry up to 3 times
+          responseRestaurants.isEmpty && retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseRestaurants == null) {
+      if (responseRestaurants.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
       }
       print(responseRestaurants);
       // String callGeminiClueResponse =
@@ -232,15 +254,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCountClues++;
         _writeErrorDetailsToFile(callGeminiClueResponse, responseRestaurants);
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
       }
       String responseWithoutBackticks = callGeminiClueResponse
           .replaceAll('```json', '')
@@ -299,14 +322,15 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseRestaurants == null && retryCount < 3); // Retry up to 3 times
+          responseRestaurants.isEmpty && retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseRestaurants == null) {
+      if (responseRestaurants.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
       }
       print(responseRestaurants);
       // String callGeminiClueResponse =
@@ -319,15 +343,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCountClues++;
         _writeErrorDetailsToFile(callGeminiClueResponse, responseRestaurants);
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
       }
       String responseWithoutBackticks = callGeminiClueResponse
           .replaceAll('```json', '')
@@ -388,13 +413,15 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseRestaurants == null && retryCount < 3); // Retry up to 3 times
+          responseRestaurants.isEmpty && retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseRestaurants == null) {
+      if (responseRestaurants.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       print(responseRestaurants);
@@ -408,14 +435,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCountClues++;
         _writeErrorDetailsToFile(callGeminiClueResponse, responseRestaurants);
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       String responseWithoutBackticks = callGeminiClueResponse
@@ -475,13 +504,15 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseRestaurants == null && retryCount < 3); // Retry up to 3 times
+          responseRestaurants.isEmpty && retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseRestaurants == null) {
+      if (responseRestaurants.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       print(responseRestaurants);
@@ -495,14 +526,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCountClues++;
         _writeErrorDetailsToFile(callGeminiClueResponse, responseRestaurants);
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       String responseWithoutBackticks = callGeminiClueResponse
@@ -579,14 +612,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseTouristPlaces == null &&
+          responseTouristPlaces.isEmpty &&
               retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseTouristPlaces == null) {
+      if (responseTouristPlaces.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       print(responseTouristPlaces);
@@ -601,14 +636,16 @@ class _LocationScreenState extends State<LocationScreen> {
         _writeErrorDetailsToFile(callGeminiClueResponse, responseTouristPlaces);
         retryCountClues++;
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       String responseWithoutBackticks = callGeminiClueResponse
@@ -669,14 +706,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseTouristPlaces == null &&
+          responseTouristPlaces.isEmpty &&
               retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseTouristPlaces == null) {
+      if (responseTouristPlaces.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       print(responseTouristPlaces);
@@ -691,14 +730,16 @@ class _LocationScreenState extends State<LocationScreen> {
         _writeErrorDetailsToFile(callGeminiClueResponse, responseTouristPlaces);
         retryCountClues++;
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       String responseWithoutBackticks = callGeminiClueResponse
@@ -759,14 +800,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseTouristPlaces == null &&
+          responseTouristPlaces.isEmpty &&
               retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseTouristPlaces == null) {
+      if (responseTouristPlaces.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       print(responseTouristPlaces);
@@ -781,14 +824,16 @@ class _LocationScreenState extends State<LocationScreen> {
         _writeErrorDetailsToFile(callGeminiClueResponse, responseTouristPlaces);
         retryCountClues++;
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       String responseWithoutBackticks = callGeminiClueResponse
@@ -849,14 +894,16 @@ class _LocationScreenState extends State<LocationScreen> {
         retryCount++;
       } while (
           // ignore: unnecessary_null_comparison
-          responseTouristPlaces == null &&
+          responseTouristPlaces.isEmpty &&
               retryCount < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (responseTouristPlaces == null) {
+      if (responseTouristPlaces.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCount retries.');
-      } else {
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
         // Use the retrieved restaurants in responseRestaurants
       }
       print(responseTouristPlaces);
@@ -871,15 +918,16 @@ class _LocationScreenState extends State<LocationScreen> {
         _writeErrorDetailsToFile(callGeminiClueResponse, responseTouristPlaces);
         retryCountClues++;
         // ignore: unnecessary_null_comparison
-      } while (callGeminiClueResponse == null &&
+      } while (callGeminiClueResponse.isEmpty &&
           retryCountClues < 3); // Retry up to 3 times
 
       // ignore: unnecessary_null_comparison
-      if (callGeminiClueResponse == null) {
+      if (callGeminiClueResponse.isEmpty) {
         // Handle case where retries fail (consider more informative message)
-        print('Failed to retrieve restaurants after $retryCountClues retries.');
-      } else {
-        // Use the retrieved restaurants in responseRestaurants
+        setState(() {
+          _locationMessage = 'Error loading data. Please try again.';
+        });
+        return;
       }
       String responseWithoutBackticks = callGeminiClueResponse
           .replaceAll('```json', '')
