@@ -652,10 +652,13 @@ class _CluesState extends State<Clues> {
       final imageBytes = await File(pickedFile.path).readAsBytes();
       print("Sumanth before calling verifyImage");
       String? verifyImage =
-          await _VerifyImage(currentIndex, restaurant, imageBytes,apiKey);
+          await _VerifyImage(currentIndex, restaurant, imageBytes, apiKey);
       print("Sumanth after calling verifyImage");
-      print("Sumanth printing Verify image response $verifyImage");
-      if (verifyImage == "Yes") {
+      print("Sumanth printing Verify image response |$verifyImage|");
+      String cleanedVerifyImage = verifyImage!.replaceAll(RegExp(r'[^\w]'), '');
+      print("Sumanth printing Verify image response before if condition |$cleanedVerifyImage|");
+      // Check the cleaned response
+      if (cleanedVerifyImage.toLowerCase() == "yes") {
         print("Sumanth before printing total price");
         final model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey);
 
@@ -674,7 +677,7 @@ class _CluesState extends State<Clues> {
         print("Sumanth in upload receipt ${response.text}");
       }
       // Initialize the model
-
+      print("Sumanth after printing total price");
       return '';
     } catch (e) {
       print('Failed to upload receipt');
@@ -683,15 +686,15 @@ class _CluesState extends State<Clues> {
     }
   }
 
-  Future<String?> _VerifyImage(
-      int currentIndex, String restaurant, Uint8List imageBytes,String apiKey) async {
+  Future<String?> _VerifyImage(int currentIndex, String restaurant,
+      Uint8List imageBytes, String apiKey) async {
     try {
       // Initialize the model
       final model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey);
 
       // Create the prompt
       final prompt = TextPart(
-          "In the attached image, do you see the word Fort Wayn Halal? Answer yes or no.");
+          "In the attached image, do you see the word Fort Wayn Halal? Answer yes or no. Response must not contain any full stop.");
 
       final response = await model.generateContent([
         Content.multi([
