@@ -36,6 +36,7 @@ class _NewGameState extends State<NewGame> {
       if (isNewUser) {
         // Navigate to ProfileSetup if it's a new user
         Navigator.pushReplacement(
+          // ignore: use_build_context_synchronously
           context,
           MaterialPageRoute(builder: (context) => ProfileSetup(user: user)),
         );
@@ -163,6 +164,7 @@ class _NewGameState extends State<NewGame> {
 
     // 2. Navigate to Clues, passing the loaded game data
     Navigator.push(
+      // ignore: use_build_context_synchronously
       context,
       MaterialPageRoute(
         builder: (context) => Clues(

@@ -11,7 +11,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:card_swiper/card_swiper.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_generative_ai/google_generative_ai.dart';
+// import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -476,7 +479,7 @@ class _CluesState extends State<Clues> {
                             child: ElevatedButton(
                               onPressed: isAnswerSubmittedList[currentIndex - 1]
                                   ? () {
-                                      _GetThereMaps(currentIndex - 1,
+                                      _UploadReceipt(currentIndex - 1,
                                           widget.restaurants[currentIndex - 1]);
                                     }
                                   : null,
@@ -622,6 +625,89 @@ class _CluesState extends State<Clues> {
       print('Error launching maps: $e');
       // Handle the error (e.g., show an error message to the user)
     }
+  }
+
+  Future<String> _UploadReceipt(int currentIndex, String restaurant) async {
+    try {
+      // Load the .env file
+      print("Loading .env file");
+      await dotenv.load();
+      print('Finished loading .env file.');
+
+      final apiKey = dotenv.env['API_KEY'] ?? '';
+      print('Sumanth\'s API Key: $apiKey');
+      if (apiKey.isEmpty) {
+        throw Exception('API_KEY is not set in the .env file');
+      }
+      final ImagePicker _picker = ImagePicker();
+
+      // Pick an image from the gallery
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile == null) {
+        throw Exception('No image selected');
+      }
+
+      // Read the image file as bytes
+      final imageBytes = await File(pickedFile.path).readAsBytes();
+      print("Sumanth before calling verifyImage");
+      String? verifyImage =
+          await _VerifyImage(currentIndex, restaurant, imageBytes,apiKey);
+      print("Sumanth after calling verifyImage");
+      print("Sumanth printing Verify image response $verifyImage");
+      if (verifyImage == "Yes") {
+        print("Sumanth before printing total price");
+        final model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey);
+
+        // Create the prompt
+        final prompt = TextPart(
+            "In the attached image which is a receipt, do you see grand total? If yes return the total amount otherwise no. Response must contain only grand total or No.");
+
+        // Generate content
+        final response = await model.generateContent([
+          Content.multi([
+            prompt,
+            DataPart('image/png', imageBytes),
+          ])
+        ]);
+
+        print("Sumanth in upload receipt ${response.text}");
+      }
+      // Initialize the model
+
+      return '';
+    } catch (e) {
+      print('Failed to upload receipt');
+      print("Error is $e");
+      return '';
+    }
+  }
+
+  Future<String?> _VerifyImage(
+      int currentIndex, String restaurant, Uint8List imageBytes,String apiKey) async {
+    try {
+      // Initialize the model
+      final model = GenerativeModel(model: 'gemini-1.5-pro', apiKey: apiKey);
+
+      // Create the prompt
+      final prompt = TextPart(
+          "In the attached image, do you see the word Fort Wayn Halal? Answer yes or no.");
+
+      final response = await model.generateContent([
+        Content.multi([
+          prompt,
+          DataPart('image/png', imageBytes),
+        ])
+      ]);
+
+      print("Sumanth in verify image ${response.text}");
+      print("Sumanth in verify image before returning");
+      return response.text;
+    } catch (e) {
+      print('Failed to upload receipt');
+      print("Error is $e");
+    }
+    return null;
   }
 
   Future<String?> _uploadImageToFirebase(XFile imageFile) async {
@@ -875,7 +961,7 @@ class CongratulationsBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    confettiController.play(); 
+    confettiController.play();
     return Container(
       color: Colors.transparent,
       child: Stack(
