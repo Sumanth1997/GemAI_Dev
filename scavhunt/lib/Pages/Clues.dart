@@ -664,8 +664,9 @@ class _CluesState extends State<Clues> {
 
         // Create the prompt
         final prompt = TextPart(
-            "In the attached image which is a receipt, do you see grand total? If yes return the total amount otherwise no. Response must contain only grand total or No.");
+            "Please analyze the attached image of the receipt. If a total amount is visible, return the total amount. If not, simply respond with 'No.' The response should only include the total amount or 'No.'");
 
+      await Future.delayed(Duration(seconds: 3));
         // Generate content
         final response = await model.generateContent([
           Content.multi([
@@ -675,6 +676,18 @@ class _CluesState extends State<Clues> {
         ]);
 
         print("Sumanth in upload receipt ${response.text}");
+        final priceString = response.text?.replaceAll(RegExp(r'[^\d.]'), '');
+        if (priceString!.isNotEmpty) {
+          final price = double.tryParse(priceString) ?? 0.0;
+          final pointsToAdd = (price * 100).toInt(); // Multiply by 1000
+
+          // Update the scoreboard with the new points
+          final user = FirebaseAuth.instance.currentUser;
+          if (user != null) {
+            await _updateScoreboardPoints(user.uid, pointsToAdd);
+          }
+        }
+        
       }
       // Initialize the model
       print("Sumanth after printing total price");
@@ -711,6 +724,31 @@ class _CluesState extends State<Clues> {
       print("Error is $e");
     }
     return null;
+  }
+
+  Future<void> _updateScoreboardPoints(String? userId, int pointsToAdd) async {
+    final firestore = FirebaseFirestore.instance;
+    final scoreboardCollection = firestore.collection('scoreboard');
+
+    try {
+      // Check if a document for the user exists
+      final docRef = scoreboardCollection.doc(userId); // Use userId as doc ID
+      final docSnapshot = await docRef.get();
+
+      if (docSnapshot.exists) {
+        // Document exists, increment the points
+        await docRef.update({
+          'points': FieldValue.increment(pointsToAdd), // Increment by pointsToAdd
+        });
+      } else {
+        // Document doesn't exist, create a new document
+        await docRef.set({
+          'points': pointsToAdd, // Initial points
+        });
+      }
+    } catch (e) {
+      print('Error updating scoreboard data: $e');
+    }
   }
 
   Future<String?> _uploadImageToFirebase(XFile imageFile) async {
