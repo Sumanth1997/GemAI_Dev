@@ -538,7 +538,7 @@ class _CluesState extends State<Clues> {
                     child: IconButton(
                       onPressed: () {
                         // Wrap in a function
-                        _pickImage(currentIndex);
+                        _pickImage(widget.restaurants[currentIndex - 1],currentIndex);
                       },
                       icon: Icon(Icons.edit, color: Colors.white),
                     ),
@@ -572,7 +572,7 @@ class _CluesState extends State<Clues> {
                           ElevatedButton(
                             onPressed: () {
                               // Wrap in a function
-                              _pickImage(currentIndex);
+                              _pickImage(widget.restaurants[currentIndex - 1],currentIndex);
                             },
                             child: Text('Upload Image'),
                           ),
@@ -594,7 +594,16 @@ class _CluesState extends State<Clues> {
     );
   }
 
-  Future<void> _pickImage(int currentIndex) async {
+  Future<void> _pickImage(String restaurant, int currentIndex) async {
+    print("Loading .env file");
+    await dotenv.load();
+    print('Finished loading .env file.');
+
+    final apiKey = dotenv.env['API_KEY'] ?? '';
+    print('Sumanth\'s API Key: $apiKey');
+    if (apiKey.isEmpty) {
+      throw Exception('API_KEY is not set in the .env file');
+    }
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
@@ -608,6 +617,27 @@ class _CluesState extends State<Clues> {
       // Update the imagePath in the 'clues' collection for the current index
       if (imageUrl != null) {
         await _updateImagePathInFirestore(imageUrl, currentIndex);
+      }
+    }
+    final imageBytes = await File(pickedFile!.path).readAsBytes();
+    String? verifyImage =
+        await _VerifyImage(currentIndex, restaurant, imageBytes, apiKey);
+    print("Sumanth after calling verifyImage");
+    print("Sumanth printing Verify image response |$verifyImage|");
+    String cleanedVerifyImage = verifyImage!.replaceAll(RegExp(r'[^\w]'), '');
+    print(
+        "Sumanth printing Verify image response before if condition |$cleanedVerifyImage|");
+    // Check the cleaned response
+    if (cleanedVerifyImage.toLowerCase() == "yes") {
+      print("Sumanth before printing total price");
+
+      // Create the prompt
+      final pointsToAdd = 10000; // Multiply by 1000
+
+      // Update the scoreboard with the new points
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await _updateScoreboardPoints(user.uid, pointsToAdd);
       }
     }
   }
@@ -656,7 +686,8 @@ class _CluesState extends State<Clues> {
       print("Sumanth after calling verifyImage");
       print("Sumanth printing Verify image response |$verifyImage|");
       String cleanedVerifyImage = verifyImage!.replaceAll(RegExp(r'[^\w]'), '');
-      print("Sumanth printing Verify image response before if condition |$cleanedVerifyImage|");
+      print(
+          "Sumanth printing Verify image response before if condition |$cleanedVerifyImage|");
       // Check the cleaned response
       if (cleanedVerifyImage.toLowerCase() == "yes") {
         print("Sumanth before printing total price");
@@ -666,7 +697,7 @@ class _CluesState extends State<Clues> {
         final prompt = TextPart(
             "Please analyze the attached image of the receipt. If a total amount is visible, return the total amount. If not, simply respond with 'No.' The response should only include the total amount or 'No.'");
 
-      await Future.delayed(Duration(seconds: 3));
+        await Future.delayed(Duration(seconds: 3));
         // Generate content
         final response = await model.generateContent([
           Content.multi([
@@ -687,7 +718,6 @@ class _CluesState extends State<Clues> {
             await _updateScoreboardPoints(user.uid, pointsToAdd);
           }
         }
-        
       }
       // Initialize the model
       print("Sumanth after printing total price");
@@ -738,7 +768,8 @@ class _CluesState extends State<Clues> {
       if (docSnapshot.exists) {
         // Document exists, increment the points
         await docRef.update({
-          'points': FieldValue.increment(pointsToAdd), // Increment by pointsToAdd
+          'points':
+              FieldValue.increment(pointsToAdd), // Increment by pointsToAdd
         });
       } else {
         // Document doesn't exist, create a new document
