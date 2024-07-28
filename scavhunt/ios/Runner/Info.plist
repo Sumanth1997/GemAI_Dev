@@ -45,6 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to upload receipts.</string>
+
 
 	<key>NSLocationWhenInUseUsageDescription</key>
     <string>Your location is needed to show relevant information.</string>

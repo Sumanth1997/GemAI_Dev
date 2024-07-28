@@ -605,6 +605,8 @@ class _CluesState extends State<Clues> {
       throw Exception('API_KEY is not set in the .env file');
     }
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    
+
     if (pickedFile != null) {
       setState(() {
         // Update the selected image for the specific card
