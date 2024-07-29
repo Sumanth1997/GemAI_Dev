@@ -8,10 +8,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:namer_app/Pages/add_friends.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/grid_list.dart';
+import 'package:namer_app/Pages/main.dart';
 import 'package:namer_app/Pages/scoreboard.dart';
 import 'package:namer_app/Pages/tracker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -23,12 +26,25 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   int currentPoints = 0; // Variable to store points
   String? _profileImageUrl;
+  String _selectedLanguage = 'English'; // Default language
+  final List<String> _languages = [
+    'English',
+    'Kannada',
+    'Spanish',
+    'Chinese',
+    'French',
+    'German',
+    'Russian',
+    'Japanese',
+  ];
+  bool _showLanguageDropdown = false; // Flag to control dropdown visibility
 
   @override
   void initState() {
     super.initState();
     _fetchPoints();
     _loadProfileImage(); // Load the profile image when the widget initializes
+    _loadSelectedLanguage(); // Load the selected language from SharedPreferences
   }
 
   Future<void> _fetchPoints() async {
@@ -51,6 +67,7 @@ class _AppDrawerState extends State<AppDrawer> {
       }
     }
   }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
@@ -82,6 +99,7 @@ class _AppDrawerState extends State<AppDrawer> {
       }
     }
   }
+
   Future<void> _loadProfileImage() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -89,7 +107,19 @@ class _AppDrawerState extends State<AppDrawer> {
     });
   }
 
+  // Load the selected language from SharedPreferences
+  Future<void> _loadSelectedLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _selectedLanguage = prefs.getString('selectedLanguage') ?? 'English';
+    });
+  }
 
+  // Save the selected language to SharedPreferences
+  Future<void> _saveSelectedLanguage() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('selectedLanguage', _selectedLanguage);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,6 +192,33 @@ class _AppDrawerState extends State<AppDrawer> {
                 MaterialPageRoute(builder: (context) => AddFriendsPage()),
               );
             },
+          ),
+          ListTile(
+            title: Text('App Language: $_selectedLanguage'), // Display selected language
+            onTap: () {
+              setState(() {
+                _showLanguageDropdown = !_showLanguageDropdown; // Toggle dropdown
+              });
+            },
+            trailing: _showLanguageDropdown
+                ? DropdownButton<String>(
+                    value: _selectedLanguage,
+                    items: _languages.map((language) {
+                      return DropdownMenuItem<String>(
+                        value: language,
+                        child: Text(language),
+                      );
+                    }).toList(),
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedLanguage = newValue!;
+                        _saveSelectedLanguage(); // Save the selected language
+                        _showLanguageDropdown = false; 
+                        Provider.of<LocaleProvider>(context, listen: false).setLocale(newValue);// Hide dropdown after selection
+                      });
+                    },
+                  )
+                : null, // Hide dropdown if not tapped
           ),
           ListTile(
             title: const Text('Logout'),

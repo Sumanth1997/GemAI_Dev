@@ -11,6 +11,7 @@ import 'package:namer_app/Pages/join_game.dart';
 import 'package:namer_app/Pages/profile_setup.dart';
 import 'package:namer_app/Pages/public_hunts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 // Import your DifficultyLevel widget
 
@@ -49,7 +50,7 @@ class _NewGameState extends State<NewGame> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Welcome'),
+        title: Text(AppLocalizations.of(context)!.welcome),
         centerTitle: true,
       ),
       drawer: AppDrawer(),

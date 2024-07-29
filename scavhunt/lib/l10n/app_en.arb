@@ -1,0 +1,6 @@
+{
+  "welcome": "Welcome",
+  "@welcome": {
+    "description": "Welcome message"
+  }
+}
