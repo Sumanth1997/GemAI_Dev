@@ -13,13 +13,14 @@ class DifficultyLevel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<String> itemTexts = [
-      'Virtual Hunt',
-      'Inter City',
-      'Inter State',
-      'Inter Country',
-      'Inter continent',
+      'Virtual Voyage',
+      'City Cove Caper',
+      'State Secret Search',
+      'Nation Nautical Nightmare',
+      'World Wind Wander',
       // Add more items as needed
     ];
+
 
     final TextStyle itemTextStyle = TextStyle(
       fontSize: 18,
@@ -53,19 +54,19 @@ class DifficultyLevel extends StatelessWidget {
           Color cardColor = Colors.grey; // Default color for other options
 
           switch (text) {
-            case 'Virtual Hunt':
+            case 'Virtual Voyage':
               cardColor = Colors.brown; // Bronze
               break;
-            case 'Inter City':
+            case 'City Cove Caper':
               cardColor = const Color.fromARGB(255, 189, 189, 189); // Silver
               break;
-            case 'Inter State':
+            case 'State Secret Search':
               cardColor = Colors.amber; // Gold
               break;
-            case 'Inter Country':
+            case 'Nation Nautical Nightmare':
               cardColor = Colors.lightBlueAccent; // Diamond (light blue)
               break;
-            case 'Inter continent':
+            case 'World Wind Wander':
               cardColor = Color.fromARGB(255, 238, 5, 5); // Obsidian
               break;
           }
@@ -88,35 +89,35 @@ class DifficultyLevel extends StatelessWidget {
   }
 
   void navigateToLocationPrint(BuildContext context, String selectedText) {
-    if (selectedText == 'Inter City') {
+    if (selectedText == 'City Cove Caper') {
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
                 LocationScreen(selectedText: selectedText, category: category)),
       );
-    } else if (selectedText == 'Inter State') {
+    } else if (selectedText == 'State Secret Search') {
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
                 LocationScreen(selectedText: selectedText, category: category)),
       );
-    } else if (selectedText == 'Inter Country') {
+    } else if (selectedText == 'Nation Nautical Nightmare') {
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
                 LocationScreen(selectedText: selectedText, category: category)),
       );
-    } else if (selectedText == 'Inter continent') {
+    } else if (selectedText == 'World Wind Wander') {
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
                 LocationScreen(selectedText: selectedText, category: category)),
       );
-    } else if (selectedText == 'Virtual Hunt') {
+    } else if (selectedText == 'Virtual Voyage') {
       Navigator.push(
         context,
         MaterialPageRoute(

@@ -344,7 +344,7 @@ class _CluesState extends State<Clues> {
               children: <Widget>[
                 Center(
                   child: Text(
-                    'Clues',
+                    'Level $currentIndex',
                     style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                 ),
