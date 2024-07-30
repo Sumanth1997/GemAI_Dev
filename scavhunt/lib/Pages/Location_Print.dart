@@ -70,27 +70,27 @@ class _LocationScreenState extends State<LocationScreen> {
         print("Sumanth's place is ${placemarks[0]}");
         print("Sumanth category is $category");
         if (category == 'restaurants') {
-          if (selectedText == 'Inter City') {
+          if (selectedText == 'City Cove Caper') {
             interCityHunt(place.locality!, place.administrativeArea!);
-          } else if (selectedText == 'Virtual Hunt') {
+          } else if (selectedText == 'Virtual Voyage') {
             interCityHunt(place.locality!, place.administrativeArea!);
-          } else if (selectedText == 'Inter State') {
+          } else if (selectedText == 'State Secret Search') {
             interStateHunt(place.administrativeArea!);
-          } else if (selectedText == 'Inter Country') {
+          } else if (selectedText == 'Nation Nautical Nightmare') {
             interCountryHunt(place.country!);
-          } else if (selectedText == 'Inter continent') {
+          } else if (selectedText == 'World Wind Wander') {
             interContinentalHunt();
           }
         } else {
-          if (selectedText == 'Inter City') {
+          if (selectedText == 'City Cove Caper') {
             interCityTouristHunt(place.locality!, place.administrativeArea!);
-          } else if (selectedText == 'Virtual Hunt') {
+          } else if (selectedText == 'Virtual Voyage') {
             interCityTouristHunt(place.locality!, place.administrativeArea!);
-          } else if (selectedText == 'Inter State') {
+          } else if (selectedText == 'State Secret Search') {
             interStateTouristHunt(place.administrativeArea!);
-          } else if (selectedText == 'Inter Country') {
+          } else if (selectedText == 'Nation Nautical Nightmare') {
             interCountryTouristHunt(place.country!);
-          } else if (selectedText == 'Inter continent') {
+          } else if (selectedText == 'World Wind Wander') {
             interContinentalTouristHunt();
           }
           // _createTouristPlacesHunt(place.locality!, place.administrativeArea!);

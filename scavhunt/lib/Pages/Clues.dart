@@ -455,7 +455,7 @@ class _CluesState extends State<Clues> {
                       children: [
                         Expanded(
                           child: Visibility(
-                            visible: widget.difficulty_level != 'Virtual Hunt',
+                            visible: widget.difficulty_level != 'Virtual Voyage',
                             child: ElevatedButton(
                               onPressed: isAnswerSubmittedList[currentIndex - 1]
                                   ? () {
@@ -475,7 +475,7 @@ class _CluesState extends State<Clues> {
                       children: [
                         Expanded(
                           child: Visibility(
-                            visible: widget.difficulty_level != 'Virtual Hunt',
+                            visible: widget.difficulty_level != 'Virtual Voyage',
                             child: ElevatedButton(
                               onPressed: isAnswerSubmittedList[currentIndex - 1]
                                   ? () {
