@@ -26,6 +26,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:provider/provider.dart';
@@ -236,23 +237,38 @@ class _CluesState extends State<Clues> {
   }
 
   Future<void> _saveGameProgress() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('currentGameIndex', currentGameIndex);
+  print("Sumanth inside saveGameProgress 1");
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('currentGameIndex', currentGameIndex);
+  print("Sumanth inside saveGameProgress 2");
+  // Save restaurantList
+  final restaurantListJson = jsonEncode(widget.restaurants);
+  await prefs.setString('restaurantList', restaurantListJson);
+  print("Sumanth inside saveGameProgress 3");
 
-    // Save restaurantList
-    final restaurantListJson = jsonEncode(widget.restaurants);
-    await prefs.setString('restaurantList', restaurantListJson);
+  // Save cluesList (This requires a bit more work as it's a List of Lists)
+  print("Sumanth in savegameprogess printing |${widget.cluesList}|"); 
 
-    // Save cluesList (This requires a bit more work as it's a List of Lists)
+  // Check if cluesList is not null
+  if (widget.cluesList.isNotEmpty) {
     final cluesListJson = jsonEncode(
         widget.cluesList.map((clueList) => jsonEncode(clueList)).toList());
+    
+    print("Sumanth in savegameprogess printing |$cluesListJson|");
     await prefs.setString('cluesList', cluesListJson);
-
-    // Save isAnswerSubmittedList
-    for (int i = 0; i < isAnswerSubmittedList.length; i++) {
-      await prefs.setBool('isAnswered_$i', isAnswerSubmittedList[i]);
-    }
+  } else {
+    // Handle the case where cluesList is null (e.g., use an empty list)
+    await prefs.setString('cluesList', '[]');
   }
+  print("Sumanth inside saveGameProgress 4");
+
+  // Save isAnswerSubmittedList
+  for (int i = 0; i < isAnswerSubmittedList.length; i++) {
+    await prefs.setBool('isAnswered_$i', isAnswerSubmittedList[i]);
+  }
+  print("Sumanth inside saveGameProgress before exiting");
+}
+
 
   Future<void> _loadGameProgress() async {
     final prefs = await SharedPreferences.getInstance();
@@ -371,7 +387,7 @@ class _CluesState extends State<Clues> {
                               displayedClues[currentIndex] = clues[i];
                             });
                           },
-                          child: Text('Clue ${i + 1}'),
+                          child: Text(AppLocalizations.of(context)?.clue(i + 1) ?? 'Clue ${i + 1}'),
                         ),
                       ),
                   ],

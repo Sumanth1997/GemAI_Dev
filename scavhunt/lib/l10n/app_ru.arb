@@ -1,0 +1,27 @@
+{
+    "welcome": "Добро пожаловать",
+   "clue": "Зацепка {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "Начать новую игру",
+    "loadGame": "Загрузить игру",
+    "createHunt": "Создать игру",
+    "publicHunts": "Публичная игра",
+    "joinGame": "Присоединиться к игре",
+    "selectCategory": "Выберите категорию",
+    "restaurants": "Рестораны",
+    "touristPlaces": "Туристические места",
+    "chooseDifficultyLevel": "Выберите уровень сложности",
+    "cardCollection": "Коллекция карт",
+    "heatMap": "Тепловая карта",
+    "scoreboard": "Табло",
+    "friends": "Друзья",
+    "logout": "Выйти"
+}

@@ -1,0 +1,27 @@
+{
+    "welcome": "das Willkommen",
+   "clue": "Hinweis {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "Neues Spiel starten",
+    "loadGame": "Spiel laden",
+    "createHunt": "Spiel erstellen",
+    "publicHunts": "Öffentliches Spiel",
+    "joinGame": "Spiel beitreten",
+    "selectCategory": "Kategorie wählen",
+    "restaurants": "Restaurants",
+    "touristPlaces": "Sehenswürdigkeiten",
+    "chooseDifficultyLevel": "Wählen Sie den Schwierigkeitsgrad",
+    "cardCollection": "Kartensammlung",
+    "heatMap": "Wärmekarte",
+    "scoreboard": "Anzeigetafel",
+    "friends": "Freunde",
+    "logout": "Ausloggen"
+}

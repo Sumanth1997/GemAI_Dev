@@ -48,9 +48,10 @@ class _NewGameState extends State<NewGame> {
 
   @override
   Widget build(BuildContext context) {
+    // final localizations = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.welcome),
+        title: Text(AppLocalizations.of(context)?.welcome ?? 'Welcome'),
         centerTitle: true,
       ),
       drawer: AppDrawer(),
@@ -64,7 +65,7 @@ class _NewGameState extends State<NewGame> {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Select Category'),
+                    title: Text(AppLocalizations.of(context)?.selectCategory ?? 'Select Category'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -73,7 +74,7 @@ class _NewGameState extends State<NewGame> {
                             Navigator.pop(context); // Close dialog
                             navigateToDifficultyLevel(context, 'restaurants');
                           },
-                          child: const Text('Restaurants'),
+                          child: Text(AppLocalizations.of(context)?.restaurants ?? 'Restaurants'),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -81,14 +82,14 @@ class _NewGameState extends State<NewGame> {
                             navigateToDifficultyLevel(
                                 context, 'Tourist Places');
                           },
-                          child: const Text('Tourist Places'),
+                          child: Text(AppLocalizations.of(context)?.touristPlaces ?? 'Tourist Places'),
                         ),
                       ],
                     ),
                   ),
                 );
               },
-              child: const Text('Start New Game'),
+              child: Text(AppLocalizations.of(context)?.startNewGame ?? 'Start New Game'),
             ),
             const SizedBox(height: 20), // Add some spacing between buttons
             // In new_game.dart
@@ -97,7 +98,7 @@ class _NewGameState extends State<NewGame> {
               onPressed: () async {
                 await _loadAndNavigateToClues(context);
               },
-              child: const Text('Load Game'),
+              child: Text(AppLocalizations.of(context)?.loadGame ?? 'Load Game'),
             ),
 
             ElevatedButton(
@@ -110,7 +111,7 @@ class _NewGameState extends State<NewGame> {
                   ),
                 );
               },
-              child: const Text('Create Hunt'),
+              child: Text(AppLocalizations.of(context)?.createHunt ?? 'Create Hunt'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -122,7 +123,7 @@ class _NewGameState extends State<NewGame> {
                   ),
                 );
               },
-              child: const Text('Public Hunts'),
+              child: Text(AppLocalizations.of(context)?.publicHunts ?? 'Public Hunts'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -133,7 +134,7 @@ class _NewGameState extends State<NewGame> {
                   ),
                 );
               },
-              child: const Text('Join Game'),
+              child: Text(AppLocalizations.of(context)?.joinGame ?? 'Join Game'),
             ),
           ],
         ),

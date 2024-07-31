@@ -4,6 +4,7 @@ import 'package:namer_app/Pages/Location_Print.dart'; // Import your LocationPri
 // import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/drawer.dart';
 // import 'package:namer_app/Pages/grid_list.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class DifficultyLevel extends StatelessWidget {
   const DifficultyLevel({Key? key, required this.category});
@@ -31,7 +32,7 @@ class DifficultyLevel extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Choose difficulty level',
+          AppLocalizations.of(context)?.chooseDifficultyLevel ?? 'Choose Difficulty Level',
           style: TextStyle(color: Colors.white),
         ),
         automaticallyImplyLeading: false,

@@ -1,0 +1,27 @@
+{
+    "welcome": "Bienvenu",
+   "clue": "Indice {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "Commencer une nouvelle partie",
+    "loadGame": "Chargement du jeu",
+    "createHunt": "Créer un jeu",
+    "publicHunts": "Chasses publiques",
+    "joinGame": "Rejoins une partie",
+    "selectCategory": "Choisir une catégorie",
+    "restaurants": "le restaurant",
+    "touristPlaces": "Lieux touristiques",
+    "chooseDifficultyLevel": "Choisissez le niveau de difficulté",
+    "cardCollection": "Collection de cartes",
+    "heatMap": "Carte de chaleur",
+    "scoreboard": "Tableau de bord",
+    "friends": "Amis",
+    "logout": "Se déconnecter"
+}

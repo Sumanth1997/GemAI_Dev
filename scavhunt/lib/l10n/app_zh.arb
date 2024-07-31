@@ -1,0 +1,27 @@
+{
+    "welcome": "欢迎",
+   "clue": "线索 {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "开始新游戏",
+    "loadGame": "加载游戏",
+    "createHunt": "创建游戏",
+    "publicHunts": "公共游戏",
+    "joinGame": "加入游戏",
+    "selectCategory": "选择类别",
+    "restaurants": "餐厅",
+    "touristPlaces": "旅游景点",
+    "chooseDifficultyLevel": "选择难度级别",
+    "cardCollection": "卡牌收藏",
+    "heatMap": "热图",
+    "scoreboard": "记分牌",
+    "friends": "朋友们",
+    "logout": "登出"
+}

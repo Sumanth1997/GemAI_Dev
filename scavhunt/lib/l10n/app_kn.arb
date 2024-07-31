@@ -1,3 +1,27 @@
 {
-    "welcome": "ಸ್ವಾಗತ"
+    "welcome": "ಸ್ವಾಗತ",
+   "clue": "ಸುಳಿವು {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "ಹೊಸ ಆಟವನ್ನು ಪ್ರಾರಂಭಿಸಿ",
+    "loadGame": "ಆಟವನ್ನು ಪುನರಾರಂಭಿಸಿ",
+    "createHunt": "ಹೊಸ ಆಟವನ್ನು ರಚಿಸಿ",
+    "publicHunts": "ಸಾರ್ವಜನಿಕ ಆಟ",
+    "joinGame": "ಆಟಕ್ಕೆ ಸೇರಿಕೊಳ್ಳಿ",
+    "selectCategory": "ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "restaurants": "ಉಪಹಾರಗೃಹಗಳು",
+    "touristPlaces": "ಪ್ರವಾಸಿ ಸ್ಥಳಗಳು",
+    "chooseDifficultyLevel": "ಕಷ್ಟದ ಮಟ್ಟವನ್ನು ಆರಿಸಿ",
+    "cardCollection": "ಕಾಗದ ಸಂಗ್ರಹ",
+    "heatMap": "ತಾಪ ನಕ್ಷೆ",
+    "scoreboard": "ಅಂಕಪಟ್ಟಿ",
+    "friends": "ಸ್ನೇಹಿತರು",
+    "logout": "ಲಾಗ್ ಔಟ್"
 }

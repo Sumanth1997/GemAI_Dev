@@ -14,6 +14,7 @@ import 'package:namer_app/Pages/tracker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 
 class AppDrawer extends StatefulWidget {
@@ -158,7 +159,7 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
           ),
           ListTile(
-            title: const Text('Card Collection'),
+            title: Text(AppLocalizations.of(context)?.cardCollection ?? 'Card Collection'),
             onTap: () {
               Navigator.push(
                 context,
@@ -167,7 +168,7 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: const Text('Heat Map'),
+            title: Text(AppLocalizations.of(context)?.heatMap ?? 'Heat Map'),
             onTap: () {
               Navigator.push(
                 context,
@@ -176,7 +177,7 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: const Text('Scoreboard'),
+            title: Text(AppLocalizations.of(context)?.scoreboard ?? 'Scoreboard'),
             onTap: () {
               Navigator.push(
                 context,
@@ -185,7 +186,7 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: const Text('Friends'),
+            title: Text(AppLocalizations.of(context)?.friends ?? 'Scoreboard'),
             onTap: () {
               Navigator.push(
                 context,
@@ -221,7 +222,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 : null, // Hide dropdown if not tapped
           ),
           ListTile(
-            title: const Text('Logout'),
+            title: Text(AppLocalizations.of(context)?.logout ?? 'Scoreboard'),
             leading: Icon(Icons.logout),
             onTap: () async {
               await FirebaseAuth.instance.signOut();

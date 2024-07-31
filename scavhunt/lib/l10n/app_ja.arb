@@ -1,0 +1,27 @@
+{
+    "welcome": "いらっしゃいませ",
+   "clue": "手がかり {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "新しいゲームを始める",
+    "loadGame": "ゲームをロードする",
+    "createHunt": "ゲームを作る",
+    "publicHunts": "パブリックゲーム",
+    "joinGame": "ゲームに参加します",
+    "selectCategory": "カテゴリを選んでください",
+    "restaurants": "レストラン",
+    "touristPlaces": "観光地",
+    "chooseDifficultyLevel": "難易度を選択してください",
+    "cardCollection": "カードコレクション",
+    "heatMap": "ヒートマップ",
+    "scoreboard": "スコアボード",
+    "friends": "友達",
+    "logout": "ログアウト"
+}

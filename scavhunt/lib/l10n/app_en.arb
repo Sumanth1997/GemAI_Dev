@@ -2,5 +2,32 @@
   "welcome": "Welcome",
   "@welcome": {
     "description": "Welcome message"
-  }
+  },
+  "clue": "Clue {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "Start New Game",
+  "@startNewGame": {
+    "description": "Button text to start a new game"
+  },
+  "loadGame": "Load Game",
+  "createHunt": "Create Game",
+  "publicHunts": "Public Hunts",
+  "joinGame": "Join Game",
+  "cardCollection": "Card Collection",
+  "heatMap": "Heat Map",
+  "scoreboard": "Scoreboard",
+  "friends":"Friends",
+  "logout": "Logout",
+  "touristPlaces": "Tourist Places",
+  "selectCategory": "Select Category",
+  "chooseDifficultyLevel": "Choose Difficulty Level",
+  "restaurants":"Restaurants"
 }

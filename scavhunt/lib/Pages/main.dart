@@ -69,6 +69,24 @@ class LocaleProvider extends ChangeNotifier {
       case 'Kannada':
         _locale = const Locale('kn');
         break;
+        case 'Spanish':
+        _locale = const Locale('es');
+        break;
+        case 'Chinese':
+        _locale = const Locale('zh');
+        break;
+        case 'French':
+        _locale = const Locale('fr');
+        break;
+        case 'German':
+        _locale = const Locale('de');
+        break;
+        case 'Russian':
+        _locale = const Locale('ru');
+        break;
+        case 'Japanese':
+        _locale = const Locale('ja');
+        break;
       // Add cases for other languages as needed
       default:
         _locale = const Locale('en'); // Default to English

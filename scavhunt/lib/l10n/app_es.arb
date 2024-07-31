@@ -1,0 +1,27 @@
+{
+    "welcome": "Bienvenido",
+   "clue": "Clave {number}",
+  "@clue": {
+    "description": "The clue number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "startNewGame": "Empieza un juego nuevo",
+    "loadGame": "Cargar juego",
+    "createHunt": "Crear juego",
+    "publicHunts": "juego publico",
+    "joinGame": "Unete al juego",
+    "selectCategory": "Selecciona una categoría",
+    "restaurants": "Restaurantes",
+    "touristPlaces": "Lugares turísticos",
+    "chooseDifficultyLevel": "Elige el nivel de dificultad",
+    "cardCollection": "Colección de tarjetas",
+    "heatMap": "Mapa de calor",
+    "scoreboard": "Marcador",
+    "friends": "Amigos",
+    "logout": "Cerrar sesión"
+}
