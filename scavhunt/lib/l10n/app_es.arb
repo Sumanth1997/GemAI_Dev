@@ -23,5 +23,6 @@
     "heatMap": "Mapa de calor",
     "scoreboard": "Marcador",
     "friends": "Amigos",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "points":"Puntos: {currentPoints}"
 }

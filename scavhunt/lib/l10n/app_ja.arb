@@ -23,5 +23,6 @@
     "heatMap": "ヒートマップ",
     "scoreboard": "スコアボード",
     "friends": "友達",
-    "logout": "ログアウト"
+    "logout": "ログアウト",
+    "points":"ポイント: {currentPoints}"
 }

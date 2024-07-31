@@ -23,5 +23,6 @@
     "heatMap": "热图",
     "scoreboard": "记分牌",
     "friends": "朋友们",
-    "logout": "登出"
+    "logout": "登出",
+    "points":"积分: {currentPoints}"
 }

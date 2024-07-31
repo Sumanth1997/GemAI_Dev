@@ -45,16 +45,12 @@ class CluesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'FlipCard',
-      theme: ThemeData.dark(),
-      home: Clues(
-        restaurants: restaurantList,
-        cluesList: cluesList,
-        currentIndex: 0,
-        isAnswerSubmittedList: [],
-        difficulty_level: difficulty_level,
-      ),
+    return Clues(
+      restaurants: restaurantList,
+      cluesList: cluesList,
+      currentIndex: 0,
+      isAnswerSubmittedList: [],
+      difficulty_level: difficulty_level,
     );
   }
 }
@@ -175,7 +171,8 @@ class _CluesState extends State<Clues> {
                   (snapshot.data?.data() as Map<String, dynamic>?)?['points'] ??
                       0;
 
-              return Text('Points: $currentPoints');
+              return Text(AppLocalizations.of(context)?.points(currentPoints) ?? 'Points: $currentPoints');
+
             },
           ),
         ],

@@ -23,5 +23,6 @@
     "heatMap": "Тепловая карта",
     "scoreboard": "Табло",
     "friends": "Друзья",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "points":"Точки: {currentPoints}"
 }

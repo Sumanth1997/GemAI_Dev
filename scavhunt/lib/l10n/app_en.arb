@@ -29,5 +29,15 @@
   "touristPlaces": "Tourist Places",
   "selectCategory": "Select Category",
   "chooseDifficultyLevel": "Choose Difficulty Level",
-  "restaurants":"Restaurants"
+  "restaurants":"Restaurants",
+  "points": "Points: {currentPoints}",
+  "@points": {
+    "description": "Points display",
+    "placeholders": {
+      "currentPoints": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  }
 }

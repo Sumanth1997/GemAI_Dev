@@ -23,5 +23,6 @@
     "heatMap": "Wärmekarte",
     "scoreboard": "Anzeigetafel",
     "friends": "Freunde",
-    "logout": "Ausloggen"
+    "logout": "Ausloggen",
+    "points":"Punkte: {currentPoints}"
 }

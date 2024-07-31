@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 
 import 'package:namer_app/firebase_options.dart';
@@ -46,7 +47,12 @@ class MyApp extends StatelessWidget {
           ),
           // home: MyHomePage(),
           supportedLocales: L10n.all,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          localizationsDelegates: [
+            AppLocalizations.delegate, // Use generated delegate
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           locale: localeProvider.locale, // Use the current locale
           home: AuthGate(),
         );
@@ -69,22 +75,22 @@ class LocaleProvider extends ChangeNotifier {
       case 'Kannada':
         _locale = const Locale('kn');
         break;
-        case 'Spanish':
+      case 'Spanish':
         _locale = const Locale('es');
         break;
-        case 'Chinese':
+      case 'Chinese':
         _locale = const Locale('zh');
         break;
-        case 'French':
+      case 'French':
         _locale = const Locale('fr');
         break;
-        case 'German':
+      case 'German':
         _locale = const Locale('de');
         break;
-        case 'Russian':
+      case 'Russian':
         _locale = const Locale('ru');
         break;
-        case 'Japanese':
+      case 'Japanese':
         _locale = const Locale('ja');
         break;
       // Add cases for other languages as needed

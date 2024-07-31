@@ -1,15 +1,6 @@
 {
     "welcome": "ಸ್ವಾಗತ",
    "clue": "ಸುಳಿವು {number}",
-  "@clue": {
-    "description": "The clue number",
-    "placeholders": {
-      "number": {
-        "type": "int",
-        "example": "1"
-      }
-    }
-  },
   "startNewGame": "ಹೊಸ ಆಟವನ್ನು ಪ್ರಾರಂಭಿಸಿ",
     "loadGame": "ಆಟವನ್ನು ಪುನರಾರಂಭಿಸಿ",
     "createHunt": "ಹೊಸ ಆಟವನ್ನು ರಚಿಸಿ",
@@ -23,5 +14,6 @@
     "heatMap": "ತಾಪ ನಕ್ಷೆ",
     "scoreboard": "ಅಂಕಪಟ್ಟಿ",
     "friends": "ಸ್ನೇಹಿತರು",
-    "logout": "ಲಾಗ್ ಔಟ್"
+    "logout": "ಲಾಗ್ ಔಟ್",
+    "points":"ಅಂಕಗಳು: {currentPoints}"
 }
