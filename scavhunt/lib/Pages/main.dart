@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
+import 'package:namer_app/Pages/drawer.dart';
 
 import 'package:namer_app/firebase_options.dart';
 import 'package:namer_app/l10n/l10n.dart';
@@ -25,8 +26,17 @@ void main() async {
   localeProvider.setLocale(selectedLanguage);
 
   runApp(
-    ChangeNotifierProvider.value(
-      value: localeProvider,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(
+          value: localeProvider,
+          child: MyApp(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+          child: MyApp(),
+        ),
+      ],
       child: MyApp(),
     ),
   );
@@ -41,10 +51,9 @@ class MyApp extends StatelessWidget {
       builder: (context, localeProvider, child) {
         return MaterialApp(
           title: 'Namer App',
-          theme: ThemeData(
-            useMaterial3: true,
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-          ),
+          theme: Provider.of<ThemeProvider>(context).isDarkMode
+              ? ThemeData.dark() // Use dark theme if dark mode is enabled
+              : ThemeData.light(),
           // home: MyHomePage(),
           supportedLocales: L10n.all,
           localizationsDelegates: [

@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
-
 class AppDrawer extends StatefulWidget {
   const AppDrawer({Key? key}) : super(key: key);
 
@@ -39,6 +38,7 @@ class _AppDrawerState extends State<AppDrawer> {
     'Japanese',
   ];
   bool _showLanguageDropdown = false; // Flag to control dropdown visibility
+  bool _isDarkMode = false; // Flag to control dark mode
 
   @override
   void initState() {
@@ -46,6 +46,7 @@ class _AppDrawerState extends State<AppDrawer> {
     _fetchPoints();
     _loadProfileImage(); // Load the profile image when the widget initializes
     _loadSelectedLanguage(); // Load the selected language from SharedPreferences
+    _loadDarkMode(); // Load dark mode preference
   }
 
   Future<void> _fetchPoints() async {
@@ -122,6 +123,30 @@ class _AppDrawerState extends State<AppDrawer> {
     await prefs.setString('selectedLanguage', _selectedLanguage);
   }
 
+  // Load dark mode preference from SharedPreferences
+  Future<void> _loadDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    });
+  }
+
+  // Save dark mode preference to SharedPreferences
+  Future<void> _saveDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', _isDarkMode);
+  }
+
+  // Toggle dark mode
+  void _toggleDarkMode() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+      _saveDarkMode();
+      // Update the theme provider
+      Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -134,18 +159,33 @@ class _AppDrawerState extends State<AppDrawer> {
         children: [
           UserAccountsDrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: _isDarkMode ? Colors.grey[900] : Colors.blue,
             ),
             accountName: Padding(
               padding:
                   const EdgeInsets.only(top: 35.0), // Increased top padding
-              child: Text('John Doe'),
+              child: Text(
+                'John Doe',
+                style: TextStyle(
+                  color: _isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
             ),
             accountEmail: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(email),
-                Text('Points: $currentPoints'),
+                Text(
+                  email,
+                  style: TextStyle(
+                    color: _isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
+                Text(
+                  'Points: $currentPoints',
+                  style: TextStyle(
+                    color: _isDarkMode ? Colors.white : Colors.black,
+                  ),
+                ),
               ],
             ),
             currentAccountPicture: GestureDetector(
@@ -159,7 +199,12 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
           ),
           ListTile(
-            title: Text(AppLocalizations.of(context)?.cardCollection ?? 'Card Collection'),
+            title: Text(
+              AppLocalizations.of(context)?.cardCollection ?? 'Card Collection',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -168,7 +213,12 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: Text(AppLocalizations.of(context)?.heatMap ?? 'Heat Map'),
+            title: Text(
+              AppLocalizations.of(context)?.heatMap ?? 'Heat Map',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -177,7 +227,12 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: Text(AppLocalizations.of(context)?.scoreboard ?? 'Scoreboard'),
+            title: Text(
+              AppLocalizations.of(context)?.scoreboard ?? 'Scoreboard',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -186,7 +241,12 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: Text(AppLocalizations.of(context)?.friends ?? 'Scoreboard'),
+            title: Text(
+              AppLocalizations.of(context)?.friends ?? 'Scoreboard',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
             onTap: () {
               Navigator.push(
                 context,
@@ -195,7 +255,12 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: Text('App Language: $_selectedLanguage'), // Display selected language
+            title: Text(
+              'App Language: $_selectedLanguage',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ), // Display selected language
             onTap: () {
               setState(() {
                 _showLanguageDropdown = !_showLanguageDropdown; // Toggle dropdown
@@ -207,23 +272,37 @@ class _AppDrawerState extends State<AppDrawer> {
                     items: _languages.map((language) {
                       return DropdownMenuItem<String>(
                         value: language,
-                        child: Text(language),
+                        child: Text(
+                          language,
+                          style: TextStyle(
+                            color: _isDarkMode ? Colors.white : Colors.black,
+                          ),
+                        ),
                       );
                     }).toList(),
                     onChanged: (newValue) {
                       setState(() {
                         _selectedLanguage = newValue!;
                         _saveSelectedLanguage(); // Save the selected language
-                        _showLanguageDropdown = false; 
-                        Provider.of<LocaleProvider>(context, listen: false).setLocale(newValue);// Hide dropdown after selection
+                        _showLanguageDropdown = false;
+                        Provider.of<LocaleProvider>(context, listen: false)
+                            .setLocale(newValue); // Hide dropdown after selection
                       });
                     },
                   )
                 : null, // Hide dropdown if not tapped
           ),
           ListTile(
-            title: Text(AppLocalizations.of(context)?.logout ?? 'Scoreboard'),
-            leading: Icon(Icons.logout),
+            title: Text(
+              AppLocalizations.of(context)?.logout ?? 'Scoreboard',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            leading: Icon(
+              Icons.logout,
+              color: _isDarkMode ? Colors.white : Colors.black,
+            ),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
               Navigator.pop(context);
@@ -233,8 +312,35 @@ class _AppDrawerState extends State<AppDrawer> {
               );
             },
           ),
+          ListTile(
+            title: Text(
+              _isDarkMode ? 'Light Mode' : 'Dark Mode',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ), // Toggle text based on dark mode
+            trailing: IconButton(
+              icon: Icon(
+                _isDarkMode ? Icons.brightness_7 : Icons.brightness_4,
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+              onPressed: _toggleDarkMode,
+            ),
+          ),
         ],
       ),
     );
+  }
+}
+
+// Create a ThemeProvider class to manage the theme
+class ThemeProvider extends ChangeNotifier {
+  bool _isDarkMode = false;
+
+  bool get isDarkMode => _isDarkMode;
+
+  void toggleTheme() {
+    _isDarkMode = !_isDarkMode;
+    notifyListeners();
   }
 }
