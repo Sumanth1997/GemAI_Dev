@@ -23,11 +23,10 @@ class NewGame extends StatefulWidget {
 }
 
 class _NewGameState extends State<NewGame> {
-
   @override
   void initState() {
     super.initState();
-    _checkUserAndNavigate(); 
+    _checkUserAndNavigate();
   }
 
   Future<void> _checkUserAndNavigate() async {
@@ -41,7 +40,7 @@ class _NewGameState extends State<NewGame> {
           context,
           MaterialPageRoute(builder: (context) => ProfileSetup(user: user)),
         );
-      } 
+      }
       // If it's not a new user, you are already on the NewGame screen
     }
   }
@@ -49,6 +48,7 @@ class _NewGameState extends State<NewGame> {
   @override
   Widget build(BuildContext context) {
     // final localizations = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)?.welcome ?? 'Welcome'),
@@ -65,7 +65,8 @@ class _NewGameState extends State<NewGame> {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text(AppLocalizations.of(context)?.selectCategory ?? 'Select Category'),
+                    title: Text(AppLocalizations.of(context)?.selectCategory ??
+                        'Select Category'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -74,7 +75,9 @@ class _NewGameState extends State<NewGame> {
                             Navigator.pop(context); // Close dialog
                             navigateToDifficultyLevel(context, 'restaurants');
                           },
-                          child: Text(AppLocalizations.of(context)?.restaurants ?? 'Restaurants'),
+                          child: Text(
+                              AppLocalizations.of(context)?.restaurants ??
+                                  'Restaurants'),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -82,14 +85,18 @@ class _NewGameState extends State<NewGame> {
                             navigateToDifficultyLevel(
                                 context, 'Tourist Places');
                           },
-                          child: Text(AppLocalizations.of(context)?.touristPlaces ?? 'Tourist Places'),
+                          child: Text(
+                              AppLocalizations.of(context)?.touristPlaces ??
+                                  'Tourist Places'),
                         ),
                       ],
                     ),
                   ),
                 );
               },
-              child: Text(AppLocalizations.of(context)?.startNewGame ?? 'Start New Game'),
+              child: Text(
+                AppLocalizations.of(context)?.startNewGame ?? 'Start New Game',
+              ),
             ),
             const SizedBox(height: 20), // Add some spacing between buttons
             // In new_game.dart
@@ -98,9 +105,10 @@ class _NewGameState extends State<NewGame> {
               onPressed: () async {
                 await _loadAndNavigateToClues(context);
               },
-              child: Text(AppLocalizations.of(context)?.loadGame ?? 'Load Game'),
+              child:
+                  Text(AppLocalizations.of(context)?.loadGame ?? 'Load Game'),
             ),
-
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -111,8 +119,10 @@ class _NewGameState extends State<NewGame> {
                   ),
                 );
               },
-              child: Text(AppLocalizations.of(context)?.createHunt ?? 'Create Hunt'),
+              child: Text(
+                  AppLocalizations.of(context)?.createHunt ?? 'Create Hunt'),
             ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -123,8 +133,10 @@ class _NewGameState extends State<NewGame> {
                   ),
                 );
               },
-              child: Text(AppLocalizations.of(context)?.publicHunts ?? 'Public Hunts'),
+              child: Text(
+                  AppLocalizations.of(context)?.publicHunts ?? 'Public Hunts'),
             ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -134,7 +146,8 @@ class _NewGameState extends State<NewGame> {
                   ),
                 );
               },
-              child: Text(AppLocalizations.of(context)?.joinGame ?? 'Join Game'),
+              child:
+                  Text(AppLocalizations.of(context)?.joinGame ?? 'Join Game'),
             ),
           ],
         ),
@@ -160,8 +173,7 @@ class _NewGameState extends State<NewGame> {
     // Load isAnswerSubmittedList
     List<bool> isAnswerSubmittedList = [];
     for (int i = 0; i < loadedRestaurantList.length; i++) {
-      isAnswerSubmittedList
-          .add(prefs.getBool('isAnswered_$i') ?? false);
+      isAnswerSubmittedList.add(prefs.getBool('isAnswered_$i') ?? false);
     }
 
     // 2. Navigate to Clues, passing the loaded game data
@@ -173,7 +185,8 @@ class _NewGameState extends State<NewGame> {
           restaurants: loadedRestaurantList.cast<String>().toList(),
           cluesList: loadedCluesList,
           currentIndex: currentGameIndex,
-          isAnswerSubmittedList: isAnswerSubmittedList, difficulty_level: '',
+          isAnswerSubmittedList: isAnswerSubmittedList,
+          difficulty_level: '',
         ),
       ),
     );

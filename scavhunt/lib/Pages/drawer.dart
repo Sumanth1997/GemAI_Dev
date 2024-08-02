@@ -10,6 +10,7 @@ import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/grid_list.dart';
 import 'package:namer_app/Pages/main.dart';
 import 'package:namer_app/Pages/scoreboard.dart';
+import 'package:namer_app/Pages/theme.dart';
 import 'package:namer_app/Pages/tracker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -154,12 +155,13 @@ class _AppDrawerState extends State<AppDrawer> {
         user?.email ?? 'No email'; // Get email or default to 'No email'
 
     return Drawer(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
             decoration: BoxDecoration(
-              color: _isDarkMode ? Colors.grey[900] : Colors.blue,
+              color: Theme.of(context).appBarTheme.backgroundColor,
             ),
             accountName: Padding(
               padding:
@@ -215,9 +217,6 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.heatMap ?? 'Heat Map',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
             ),
             onTap: () {
               Navigator.push(
@@ -229,9 +228,6 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.scoreboard ?? 'Scoreboard',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
             ),
             onTap: () {
               Navigator.push(
@@ -242,10 +238,7 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           ListTile(
             title: Text(
-              AppLocalizations.of(context)?.friends ?? 'Scoreboard',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              AppLocalizations.of(context)?.friends ?? 'Friends',
             ),
             onTap: () {
               Navigator.push(
@@ -330,17 +323,5 @@ class _AppDrawerState extends State<AppDrawer> {
         ],
       ),
     );
-  }
-}
-
-// Create a ThemeProvider class to manage the theme
-class ThemeProvider extends ChangeNotifier {
-  bool _isDarkMode = false;
-
-  bool get isDarkMode => _isDarkMode;
-
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    notifyListeners();
   }
 }

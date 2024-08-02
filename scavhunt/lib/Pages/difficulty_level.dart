@@ -36,7 +36,6 @@ class DifficultyLevel extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.black,
         centerTitle: true,
         leading: Builder(
           builder: (context) {
