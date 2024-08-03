@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:namer_app/Pages/Location_Print.dart'; // Import your LocationPrint widget
-// import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/drawer.dart';
-// import 'package:namer_app/Pages/grid_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class DifficultyLevel extends StatelessWidget {
@@ -13,15 +10,34 @@ class DifficultyLevel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> itemTexts = [
-      'Virtual Voyage',
-      'City Cove Caper',
-      'State Secret Search',
-      'Nation Nautical Nightmare',
-      'World Wind Wander',
+    final List<Map<String, dynamic>> itemData = [
+      {
+        'text': 'Virtual Voyage',
+        'description': 'Embark on a digital adventure from the comfort of your home.',
+        'cardColor': Colors.brown, // Bronze
+      },
+      {
+        'text': 'City Cove Caper',
+        'description': 'Uncover hidden treasures within your city limits.',
+        'cardColor': const Color.fromARGB(255, 189, 189, 189), // Silver
+      },
+      {
+        'text': 'State Secret Search',
+        'description': 'Explore your state and discover its well-kept secrets.',
+        'cardColor': Colors.amber, // Gold
+      },
+      {
+        'text': 'Nation Nautical Nightmare',
+        'description': 'Navigate through the challenges of a nationwide hunt.',
+        'cardColor': Colors.lightBlueAccent, // Diamond (light blue)
+      },
+      {
+        'text': 'World Wind Wander',
+        'description': 'Conquer the globe and unearth ultimate rewards.',
+        'cardColor': Color.fromARGB(255, 238, 5, 5), // Obsidian
+      },
       // Add more items as needed
     ];
-
 
     final TextStyle itemTextStyle = TextStyle(
       fontSize: 18,
@@ -50,35 +66,17 @@ class DifficultyLevel extends StatelessWidget {
       ),
       drawer: AppDrawer(),
       body: Column(
-        children: itemTexts.map((text) {
-          Color cardColor = Colors.grey; // Default color for other options
-
-          switch (text) {
-            case 'Virtual Voyage':
-              cardColor = Colors.brown; // Bronze
-              break;
-            case 'City Cove Caper':
-              cardColor = const Color.fromARGB(255, 189, 189, 189); // Silver
-              break;
-            case 'State Secret Search':
-              cardColor = Colors.amber; // Gold
-              break;
-            case 'Nation Nautical Nightmare':
-              cardColor = Colors.lightBlueAccent; // Diamond (light blue)
-              break;
-            case 'World Wind Wander':
-              cardColor = Color.fromARGB(255, 238, 5, 5); // Obsidian
-              break;
-          }
-          return Expanded(
+        children: itemData.map((item) {
+          return Flexible(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ItemWidget(
-                text: text,
+                text: item['text'],
+                description: item['description'], // Pass the description
                 textStyle: itemTextStyle,
-                cardColor: cardColor,
+                cardColor: item['cardColor'],
                 onTap: () {
-                  navigateToLocationPrint(context, text);
+                  navigateToLocationPrint(context, item['text']);
                 },
               ),
             ),
@@ -89,72 +87,59 @@ class DifficultyLevel extends StatelessWidget {
   }
 
   void navigateToLocationPrint(BuildContext context, String selectedText) {
-    if (selectedText == 'City Cove Caper') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LocationScreen(selectedText: selectedText, category: category)),
-      );
-    } else if (selectedText == 'State Secret Search') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LocationScreen(selectedText: selectedText, category: category)),
-      );
-    } else if (selectedText == 'Nation Nautical Nightmare') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LocationScreen(selectedText: selectedText, category: category)),
-      );
-    } else if (selectedText == 'World Wind Wander') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LocationScreen(selectedText: selectedText, category: category)),
-      );
-    } else if (selectedText == 'Virtual Voyage') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                LocationScreen(selectedText: selectedText, category: category)),
-      );
-    } else {
-      // Handle other options if needed
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationScreen(
+          selectedText: selectedText,
+          category: category,
+        ),
+      ),
+    );
   }
 }
 
 class ItemWidget extends StatelessWidget {
   final String text;
+  final String description; // Add the description property
   final TextStyle textStyle;
   final VoidCallback onTap;
   final Color cardColor;
 
-  ItemWidget(
-      {required this.text,
-      required this.textStyle,
-      required this.onTap,
-      required this.cardColor});
+  ItemWidget({
+    required this.text,
+    required this.description, // Pass the description
+    required this.textStyle,
+    required this.onTap,
+    required this.cardColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        color: cardColor,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              text,
-              style: textStyle,
-            ),
+      child: Container(
+        width: double.infinity, // Make the card take up the full width
+        child: Card(
+          color: cardColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  text,
+                  style: textStyle,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  description, // Display the description
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
+              ),
+            ],
           ),
         ),
       ),
