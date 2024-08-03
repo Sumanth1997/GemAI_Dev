@@ -128,110 +128,106 @@ class _CluesState extends State<Clues> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    print("Sumanth inside Clues");
-    print("Sumanth printing answer submit list $isAnswerSubmittedList");
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('FlipCard'),
-        actions: [
-          IconButton(
-              onPressed: () {
-                _saveGameProgress();
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => NewGame()),
-                  (route) => false,
-                );
-              },
-              icon: Icon(Icons.home)),
-          IconButton(
-            onPressed: () {
-              _shareGame();
+Widget build(BuildContext context) {
+  print("Sumanth inside Clues");
+  print("Sumanth printing answer submit list $isAnswerSubmittedList");
+
+  return Scaffold(
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Apply theme background color
+    appBar: AppBar(
+      title: Text('FlipCard'),
+      actions: [
+        IconButton(
+          onPressed: () {
+            _saveGameProgress();
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => NewGame()),
+              (route) => false,
+            );
+          },
+          icon: Icon(Icons.home),
+        ),
+        IconButton(
+          onPressed: () {
+            _shareGame();
+          },
+          icon: Icon(Icons.share),
+        ),
+        // Use StreamBuilder to display points dynamically
+        StreamBuilder<DocumentSnapshot>(
+          stream: _firestore
+              .collection('scoreboard')
+              .doc(FirebaseAuth.instance.currentUser?.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text('Loading...');
+            }
+
+            // Get points from the snapshot
+            int currentPoints =
+                (snapshot.data?.data() as Map<String, dynamic>?)?['points'] ?? 0;
+
+            return Text(AppLocalizations.of(context)?.points(currentPoints) ?? 'Points: $currentPoints');
+          },
+        ),
+      ],
+    ),
+    drawer: AppDrawer(),
+    body: Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Center(
+          child: Swiper(
+            itemBuilder: (BuildContext context, int index) {
+              return _buildFlipCard(images[index], widget.cluesList[index], index + 1, context);
             },
-            icon: Icon(Icons.share),
-          ),
-          // Use StreamBuilder to display points dynamically
-          StreamBuilder<DocumentSnapshot>(
-            stream: _firestore
-                .collection('scoreboard')
-                .doc(FirebaseAuth.instance.currentUser?.uid)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text('Loading...');
-              }
-
-              // Get points from the snapshot
-              int currentPoints =
-                  (snapshot.data?.data() as Map<String, dynamic>?)?['points'] ??
-                      0;
-
-              return Text(AppLocalizations.of(context)?.points(currentPoints) ?? 'Points: $currentPoints');
-
+            itemCount: widget.cluesList.length,
+            itemWidth: MediaQuery.of(context).size.width * 0.85,
+            itemHeight: MediaQuery.of(context).size.height * 0.75,
+            layout: SwiperLayout.TINDER,
+            viewportFraction: 0.8,
+            scale: 0.9,
+            index: currentGameIndex,
+            onIndexChanged: (index) {
+              setState(() {
+                currentGameIndex = index; // Update currentGameIndex when the card changes
+              });
+              _answerController.clear();
+              displayedClues[index] = null;
+              _saveGameProgress();
             },
           ),
-        ],
-      ),
-      drawer: AppDrawer(),
-      body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Container(
-            decoration: BoxDecoration(color: const Color(0xFFFFFFFF)),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirection: -pi / 2, // Adjust direction as needed
+            blastDirectionality: BlastDirectionality.explosive,
+            emissionFrequency: 0.05, // Adjust frequency as needed
+            numberOfParticles: 20, // Adjust number of particles as needed
+            gravity: 0.05, // Adjust gravity as needed
           ),
-          Center(
-            child: Swiper(
-              itemBuilder: (BuildContext context, int index) {
-                return _buildFlipCard(
-                    images[index], widget.cluesList[index], index + 1, context);
-              },
-              itemCount: widget.cluesList.length,
-              itemWidth: MediaQuery.of(context).size.width * 0.85,
-              itemHeight: MediaQuery.of(context).size.height * 0.75,
-              layout: SwiperLayout.TINDER,
-              viewportFraction: 0.8,
-              scale: 0.9,
-              index: currentGameIndex,
-              onIndexChanged: (index) {
-                setState(() {
-                  currentGameIndex =
-                      index; // Update currentGameIndex when the card changes
-                });
-                _answerController.clear();
-                displayedClues[index] = null;
-                _saveGameProgress();
-              },
-            ),
-          ),
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
+        ),
+        Visibility(
+          visible: isAnswerSubmittedList.every((isAnswered) => isAnswered), // Check if all entries are true
+          child: Center(
+            child: CongratulationsBanner(
               confettiController: _confettiController,
-              blastDirection: -pi / 2, // Adjust direction as needed
-              blastDirectionality: BlastDirectionality.explosive,
-              emissionFrequency: 0.05, // Adjust frequency as needed
-              numberOfParticles: 20, // Adjust number of particles as needed
-              gravity: 0.05, // Adjust gravity as needed
-            ),
+            ), // Your banner widget
           ),
-          Visibility(
-            visible: isAnswerSubmittedList.every(
-                (isAnswered) => isAnswered), // Check if all entries are true
-            child: Center(
-              child: CongratulationsBanner(
-                confettiController: _confettiController,
-              ), // Your banner widget
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
 
   Future<void> _saveGameProgress() async {
   print("Sumanth inside saveGameProgress 1");

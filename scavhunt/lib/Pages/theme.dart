@@ -54,7 +54,7 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get darkTheme => ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.purple, // Example primary color for dark mode
-    hintColor: Colors.orange, // Example accent color for dark mode
+    hintColor: Colors.grey, // Example accent color for dark mode
     scaffoldBackgroundColor: Color(0xFF346751), // Example background color for dark mode
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xFF161616), // Customize app bar background
