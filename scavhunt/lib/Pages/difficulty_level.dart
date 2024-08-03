@@ -13,7 +13,7 @@ class DifficultyLevel extends StatelessWidget {
     final List<Map<String, dynamic>> itemData = [
       {
         'text': 'Virtual Voyage',
-        'description': 'Embark on a digital adventure from the comfort of your home.',
+        'description': 'Play at home, discover digital treasures..',
         'cardColor': Colors.brown, // Bronze
       },
       {
@@ -23,17 +23,17 @@ class DifficultyLevel extends StatelessWidget {
       },
       {
         'text': 'State Secret Search',
-        'description': 'Explore your state and discover its well-kept secrets.',
+        'description': 'Uncover mysteries within your state.',
         'cardColor': Colors.amber, // Gold
       },
       {
         'text': 'Nation Nautical Nightmare',
-        'description': 'Navigate through the challenges of a nationwide hunt.',
+        'description': 'Conquer challenges across the country.',
         'cardColor': Colors.lightBlueAccent, // Diamond (light blue)
       },
       {
         'text': 'World Wind Wander',
-        'description': 'Conquer the globe and unearth ultimate rewards.',
+        'description': 'Embark on a global adventure.',
         'cardColor': Color.fromARGB(255, 238, 5, 5), // Obsidian
       },
       // Add more items as needed
@@ -46,6 +46,7 @@ class DifficultyLevel extends StatelessWidget {
     );
 
     return Scaffold(
+      resizeToAvoidBottomInset : false,
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)?.chooseDifficultyLevel ?? 'Choose Difficulty Level',
@@ -69,7 +70,7 @@ class DifficultyLevel extends StatelessWidget {
         children: itemData.map((item) {
           return Flexible(
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: ItemWidget(
                 text: item['text'],
                 description: item['description'], // Pass the description
