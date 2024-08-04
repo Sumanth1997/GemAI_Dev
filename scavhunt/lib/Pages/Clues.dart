@@ -364,7 +364,7 @@ Widget build(BuildContext context) {
                     alignment: Alignment.center,
                     height: MediaQuery.of(context).size.height * 0.25,
                     child: Text(
-                      displayedClues[currentIndex]!,
+                      '\"${displayedClues[currentIndex]}\"',
                       style: TextStyle(fontSize: 18.0, color: Colors.white),
                     ),
                   ),

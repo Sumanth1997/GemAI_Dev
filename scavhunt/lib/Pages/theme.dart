@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  bool _isDarkMode = false;
+  bool _isDarkMode =  MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark; // Initialize based on device brightness
 
   // Define color schemes for light and dark mode
   ThemeData get lightTheme => ThemeData(
