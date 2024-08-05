@@ -19,7 +19,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:namer_app/Pages/drawer.dart';
+import 'package:namer_app/Pages/main.dart';
 import 'package:namer_app/Pages/new_game.dart';
+import 'package:namer_app/Pages/translate_api.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -128,140 +131,144 @@ class _CluesState extends State<Clues> {
   }
 
   @override
-Widget build(BuildContext context) {
-  print("Sumanth inside Clues");
-  print("Sumanth printing answer submit list $isAnswerSubmittedList");
+  Widget build(BuildContext context) {
+    print("Sumanth inside Clues");
+    print("Sumanth printing answer submit list $isAnswerSubmittedList");
 
-  return Scaffold(
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Apply theme background color
-    appBar: AppBar(
-      title: Text('FlipCard'),
-      actions: [
-        IconButton(
-          onPressed: () {
-            _saveGameProgress();
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => NewGame()),
-              (route) => false,
-            );
-          },
-          icon: Icon(Icons.home),
-        ),
-        IconButton(
-          onPressed: () {
-            _shareGame();
-          },
-          icon: Icon(Icons.share),
-        ),
-        // Use StreamBuilder to display points dynamically
-        StreamBuilder<DocumentSnapshot>(
-          stream: _firestore
-              .collection('scoreboard')
-              .doc(FirebaseAuth.instance.currentUser?.uid)
-              .snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...');
-            }
-
-            // Get points from the snapshot
-            int currentPoints =
-                (snapshot.data?.data() as Map<String, dynamic>?)?['points'] ?? 0;
-
-            return Text(AppLocalizations.of(context)?.points(currentPoints) ?? 'Points: $currentPoints');
-          },
-        ),
-      ],
-    ),
-    drawer: AppDrawer(),
-    body: Stack(
-      fit: StackFit.expand,
-      children: <Widget>[
-        Center(
-          child: Swiper(
-            itemBuilder: (BuildContext context, int index) {
-              return _buildFlipCard(images[index], widget.cluesList[index], index + 1, context);
-            },
-            itemCount: widget.cluesList.length,
-            itemWidth: MediaQuery.of(context).size.width * 0.85,
-            itemHeight: MediaQuery.of(context).size.height * 0.75,
-            layout: SwiperLayout.TINDER,
-            viewportFraction: 0.8,
-            scale: 0.9,
-            index: currentGameIndex,
-            onIndexChanged: (index) {
-              setState(() {
-                currentGameIndex = index; // Update currentGameIndex when the card changes
-              });
-              _answerController.clear();
-              displayedClues[index] = null;
+    return Scaffold(
+      backgroundColor: Theme.of(context)
+          .scaffoldBackgroundColor, // Apply theme background color
+      appBar: AppBar(
+        title: Text('FlipCard'),
+        actions: [
+          IconButton(
+            onPressed: () {
               _saveGameProgress();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => NewGame()),
+                (route) => false,
+              );
+            },
+            icon: Icon(Icons.home),
+          ),
+          IconButton(
+            onPressed: () {
+              _shareGame();
+            },
+            icon: Icon(Icons.share),
+          ),
+          // Use StreamBuilder to display points dynamically
+          StreamBuilder<DocumentSnapshot>(
+            stream: _firestore
+                .collection('scoreboard')
+                .doc(FirebaseAuth.instance.currentUser?.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('Loading...');
+              }
+
+              // Get points from the snapshot
+              int currentPoints =
+                  (snapshot.data?.data() as Map<String, dynamic>?)?['points'] ??
+                      0;
+
+              return Text(AppLocalizations.of(context)?.points(currentPoints) ??
+                  'Points: $currentPoints');
             },
           ),
-        ),
-        Align(
-          alignment: Alignment.topCenter,
-          child: ConfettiWidget(
-            confettiController: _confettiController,
-            blastDirection: -pi / 2, // Adjust direction as needed
-            blastDirectionality: BlastDirectionality.explosive,
-            emissionFrequency: 0.05, // Adjust frequency as needed
-            numberOfParticles: 20, // Adjust number of particles as needed
-            gravity: 0.05, // Adjust gravity as needed
+        ],
+      ),
+      drawer: AppDrawer(),
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Center(
+            child: Swiper(
+              itemBuilder: (BuildContext context, int index) {
+                return _buildFlipCard(
+                    images[index], widget.cluesList[index], index + 1, context);
+              },
+              itemCount: widget.cluesList.length,
+              itemWidth: MediaQuery.of(context).size.width * 0.85,
+              itemHeight: MediaQuery.of(context).size.height * 0.75,
+              layout: SwiperLayout.TINDER,
+              viewportFraction: 0.8,
+              scale: 0.9,
+              index: currentGameIndex,
+              onIndexChanged: (index) {
+                setState(() {
+                  currentGameIndex =
+                      index; // Update currentGameIndex when the card changes
+                });
+                _answerController.clear();
+                displayedClues[index] = null;
+                _saveGameProgress();
+              },
+            ),
           ),
-        ),
-        Visibility(
-          visible: isAnswerSubmittedList.every((isAnswered) => isAnswered), // Check if all entries are true
-          child: Center(
-            child: CongratulationsBanner(
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
               confettiController: _confettiController,
-            ), // Your banner widget
+              blastDirection: -pi / 2, // Adjust direction as needed
+              blastDirectionality: BlastDirectionality.explosive,
+              emissionFrequency: 0.05, // Adjust frequency as needed
+              numberOfParticles: 20, // Adjust number of particles as needed
+              gravity: 0.05, // Adjust gravity as needed
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+          Visibility(
+            visible: isAnswerSubmittedList.every(
+                (isAnswered) => isAnswered), // Check if all entries are true
+            child: Center(
+              child: CongratulationsBanner(
+                confettiController: _confettiController,
+              ), // Your banner widget
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Future<void> _saveGameProgress() async {
-  print("Sumanth inside saveGameProgress 1");
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setInt('currentGameIndex', currentGameIndex);
-  print("Sumanth inside saveGameProgress 2");
-  // Save restaurantList
-  final restaurantListJson = jsonEncode(widget.restaurants);
-  await prefs.setString('restaurantList', restaurantListJson);
-  print("Sumanth inside saveGameProgress 3");
+    print("Sumanth inside saveGameProgress 1");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('currentGameIndex', currentGameIndex);
+    print("Sumanth inside saveGameProgress 2");
+    // Save restaurantList
+    final restaurantListJson = jsonEncode(widget.restaurants);
+    await prefs.setString('restaurantList', restaurantListJson);
+    print("Sumanth inside saveGameProgress 3");
 
-  // Save cluesList (This requires a bit more work as it's a List of Lists)
-  print("Sumanth in savegameprogess printing |${widget.cluesList}|"); 
+    // Save cluesList (This requires a bit more work as it's a List of Lists)
+    print("Sumanth in savegameprogess printing |${widget.cluesList}|");
 
-  // Check if cluesList is not null
-  if (widget.cluesList.isNotEmpty) {
-    final cluesListJson = jsonEncode(
-        widget.cluesList.map((clueList) => jsonEncode(clueList)).toList());
-    
-    print("Sumanth in savegameprogess printing |$cluesListJson|");
-    await prefs.setString('cluesList', cluesListJson);
-  } else {
-    // Handle the case where cluesList is null (e.g., use an empty list)
-    await prefs.setString('cluesList', '[]');
+    // Check if cluesList is not null
+    if (widget.cluesList.isNotEmpty) {
+      final cluesListJson = jsonEncode(
+          widget.cluesList.map((clueList) => jsonEncode(clueList)).toList());
+
+      print("Sumanth in savegameprogess printing |$cluesListJson|");
+      await prefs.setString('cluesList', cluesListJson);
+    } else {
+      // Handle the case where cluesList is null (e.g., use an empty list)
+      await prefs.setString('cluesList', '[]');
+    }
+    print("Sumanth inside saveGameProgress 4");
+
+    // Save isAnswerSubmittedList
+    for (int i = 0; i < isAnswerSubmittedList.length; i++) {
+      await prefs.setBool('isAnswered_$i', isAnswerSubmittedList[i]);
+    }
+    print("Sumanth inside saveGameProgress before exiting");
   }
-  print("Sumanth inside saveGameProgress 4");
-
-  // Save isAnswerSubmittedList
-  for (int i = 0; i < isAnswerSubmittedList.length; i++) {
-    await prefs.setBool('isAnswered_$i', isAnswerSubmittedList[i]);
-  }
-  print("Sumanth inside saveGameProgress before exiting");
-}
-
 
   Future<void> _loadGameProgress() async {
     final prefs = await SharedPreferences.getInstance();
@@ -359,14 +366,32 @@ Widget build(BuildContext context) {
                 ),
                 SizedBox(height: 16),
                 if (displayedClues[currentIndex] != null)
-                  Container(
-                    padding: EdgeInsets.all(16.0),
-                    alignment: Alignment.center,
-                    height: MediaQuery.of(context).size.height * 0.25,
-                    child: Text(
-                      '\"${displayedClues[currentIndex]}\"',
-                      style: TextStyle(fontSize: 18.0, color: Colors.white),
-                    ),
+                  FutureBuilder<String?>(
+                    future: TranslateApi.translate(
+                        displayedClues[currentIndex]!, Provider.of<LocaleProvider>(context, listen: false)
+                            .locale
+                            ?.languageCode ??
+                            'en'),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final translatedText =
+                            snapshot.data ?? 'Translation not available';
+                        return Container(
+                          padding: EdgeInsets.all(16.0),
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.height * 0.25,
+                          child: Text(
+                            '\"$translatedText\"', // Display the translated text with quotes
+                            style:
+                                TextStyle(fontSize: 18.0, color: Colors.white),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 SizedBox(height: 16),
                 Row(
@@ -380,7 +405,9 @@ Widget build(BuildContext context) {
                               displayedClues[currentIndex] = clues[i];
                             });
                           },
-                          child: Text(AppLocalizations.of(context)?.clue(i + 1) ?? 'Clue ${i + 1}'),
+                          child: Text(
+                              AppLocalizations.of(context)?.clue(i + 1) ??
+                                  'Clue ${i + 1}'),
                         ),
                       ),
                   ],
@@ -464,7 +491,8 @@ Widget build(BuildContext context) {
                       children: [
                         Expanded(
                           child: Visibility(
-                            visible: widget.difficulty_level != 'Virtual Voyage',
+                            visible:
+                                widget.difficulty_level != 'Virtual Voyage',
                             child: ElevatedButton(
                               onPressed: isAnswerSubmittedList[currentIndex - 1]
                                   ? () {
@@ -484,7 +512,8 @@ Widget build(BuildContext context) {
                       children: [
                         Expanded(
                           child: Visibility(
-                            visible: widget.difficulty_level != 'Virtual Voyage',
+                            visible:
+                                widget.difficulty_level != 'Virtual Voyage',
                             child: ElevatedButton(
                               onPressed: isAnswerSubmittedList[currentIndex - 1]
                                   ? () {
@@ -547,7 +576,8 @@ Widget build(BuildContext context) {
                     child: IconButton(
                       onPressed: () {
                         // Wrap in a function
-                        _pickImage(widget.restaurants[currentIndex - 1],currentIndex);
+                        _pickImage(
+                            widget.restaurants[currentIndex - 1], currentIndex);
                       },
                       icon: Icon(Icons.edit, color: Colors.white),
                     ),
@@ -581,7 +611,8 @@ Widget build(BuildContext context) {
                           ElevatedButton(
                             onPressed: () {
                               // Wrap in a function
-                              _pickImage(widget.restaurants[currentIndex - 1],currentIndex);
+                              _pickImage(widget.restaurants[currentIndex - 1],
+                                  currentIndex);
                             },
                             child: Text('Upload Image'),
                           ),
@@ -614,7 +645,6 @@ Widget build(BuildContext context) {
       throw Exception('API_KEY is not set in the .env file');
     }
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    
 
     if (pickedFile != null) {
       setState(() {
