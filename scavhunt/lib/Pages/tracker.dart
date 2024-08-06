@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_heatmap_calendar/flutter_heatmap_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// Import for date formatting
 
 class Tracker extends StatefulWidget {
   const Tracker({Key? key}) : super(key: key);
@@ -46,52 +45,96 @@ class _TrackerState extends State<Tracker> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Get the current month and year
+  List<Widget> _generateMonthHeatmaps() {
     final now = DateTime.now();
-    final currentMonth = now.month;
     final currentYear = now.year;
 
-    // Calculate the start and end dates for the heatmap
-    final startDate = DateTime(currentYear, currentMonth - 1, 1);
-    final endDate = DateTime(currentYear, currentMonth + 2, 1)
-        .subtract(const Duration(days: 1));
+    // Generate heatmaps for the past 6 months including the current month
+    return List.generate(6, (index) {
+      final monthOffset = index;
+      final month = now.month - monthOffset;
+      final year = currentYear + (month < 1 ? -1 : 0);
+      final adjustedMonth = month < 1 ? month + 12 : month;
 
+      final startDate = DateTime(year, adjustedMonth, 1);
+      final endDate = DateTime(year, adjustedMonth + 1, 0);
+
+      // Filter data for the current month
+      final filteredData = Map.fromEntries(
+        _heatmapData.entries.where((entry) =>
+            entry.key.isAfter(startDate.subtract(Duration(days: 1))) &&
+            entry.key.isBefore(endDate.add(Duration(days: 1))))
+        .map((entry) => MapEntry(entry.key, entry.value))
+      );
+
+      // Create a grid with the number of cells equal to the days in the month
+      final numberOfDays = endDate.day;
+      final heatmapGrid = List.generate(numberOfDays, (dayIndex) {
+        final date = DateTime(year, adjustedMonth, dayIndex + 1);
+        final count = filteredData[date] ?? 0;
+
+        return Container(
+          margin: EdgeInsets.all(1.0),
+          color: _getColorForCount(count),
+          child: Center(
+            child: Text(
+              '${date.day}',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      });
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          children: [
+            Text(
+              "${startDate.month}/${startDate.year}",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7, // 7 days a week, adjust as needed
+                childAspectRatio: 1.0,
+                crossAxisSpacing: 2.0,
+                mainAxisSpacing: 2.0,
+              ),
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: numberOfDays,
+              itemBuilder: (context, index) => heatmapGrid[index],
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Color _getColorForCount(int count) {
+    if (count >= 15) {
+      return Colors.lightGreen[700]!;
+    } else if (count >= 10) {
+      return Colors.lightGreen[500]!;
+    } else if (count >= 5) {
+      return Colors.lightGreen[300]!;
+    } else if (count >= 1) {
+      return Colors.lightGreen[100]!;
+    } else {
+      return Colors.grey[200]!;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tracker'),
       ),
       backgroundColor: Colors.white,
-      body: Center(
-        child: SizedBox(
-          // width: 400, // Remove the fixed width
-          child:  // Remove the RotatedBox
-            HeatMap(
-              datasets: _heatmapData,
-              colorMode: ColorMode.color,
-              defaultColor: Colors.grey[200],
-              textColor: Colors.black,
-              colorsets: {
-                1: Colors.lightGreen[100]!,
-                5: Colors.lightGreen[300]!,
-                10: Colors.lightGreen[500]!,
-                15: Colors.lightGreen[700]!,
-              },
-              startDate: startDate,
-              endDate: endDate,
-              scrollable: true,
-              showColorTip: true,
-              // showDayNumbers: true, // This is the incorrect parameter name
-              // Use 'showNumber' instead
-              // showNumber: true, 
-              // Add a gap between months
-              // monthLabelStyle: const TextStyle(fontSize: 16),
-              // monthLabelPosition: MonthLabelPosition.above,
-              // Add a gap between months
-              // monthLabelPadding: const EdgeInsets.only(bottom: 10),
-            ),
-          
+      body: SingleChildScrollView(
+        child: Column(
+          children: _generateMonthHeatmaps(),
         ),
       ),
     );
