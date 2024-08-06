@@ -368,9 +368,10 @@ class _CluesState extends State<Clues> {
                 if (displayedClues[currentIndex] != null)
                   FutureBuilder<String?>(
                     future: TranslateApi.translate(
-                        displayedClues[currentIndex]!, Provider.of<LocaleProvider>(context, listen: false)
-                            .locale
-                            ?.languageCode ??
+                        displayedClues[currentIndex]!,
+                        Provider.of<LocaleProvider>(context, listen: false)
+                                .locale
+                                ?.languageCode ??
                             'en'),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -736,10 +737,11 @@ class _CluesState extends State<Clues> {
 
         // Create the prompt
         final prompt = TextPart(
-            "Please analyze the attached image of the receipt. If a total amount is visible, return the total amount. If not, simply respond with 'No.' The response should only include the total amount or 'No.'");
+            "Please analyze the attached image of the receipt. If a total amount and postal code are visible, return the total amount and postal code in JSON format {\"total_price\": , \"postal_code\": }. The response should only include the total amount and postal code or the default values.");
 
         await Future.delayed(Duration(seconds: 3));
-        // Generate content
+
+// Generate content
         final response = await model.generateContent([
           Content.multi([
             prompt,
@@ -748,10 +750,37 @@ class _CluesState extends State<Clues> {
         ]);
 
         print("Sumanth in upload receipt ${response.text}");
-        final priceString = response.text?.replaceAll(RegExp(r'[^\d.]'), '');
-        if (priceString!.isNotEmpty) {
-          final price = double.tryParse(priceString) ?? 0.0;
-          final pointsToAdd = (price * 100).toInt(); // Multiply by 1000
+
+        try {
+          // Clean up the response text by removing any leading/trailing whitespace
+          final cleanedResponseText = response.text?.trim() ?? '';
+
+          // Ensure the response text is a valid JSON string by checking it starts with '{' and ends with '}'
+          if (cleanedResponseText.startsWith('{') &&
+              cleanedResponseText.endsWith('}')) {
+            final jsonResponse = json.decode(cleanedResponseText);
+
+            // Safely parse total_price and postal_code
+            final totalPrice =
+                double.tryParse(jsonResponse['total_amount'].toString()) ??
+                    20.0;
+            final postalCode =
+                int.tryParse(jsonResponse['postal_code'].toString()) ?? 40000;
+            final pointsToAdd = (totalPrice * 100 + postalCode)
+                .toInt(); // Adjust based on requirements
+
+            // Update the scoreboard with the new points
+            final user = FirebaseAuth.instance.currentUser;
+            if (user != null) {
+              await _updateScoreboardPoints(user.uid, pointsToAdd);
+            }
+          } else {
+            throw FormatException('Invalid JSON format');
+          }
+        } catch (e) {
+          print("Error parsing JSON response: $e");
+          // Handle error or set default values if JSON parsing fails
+          final pointsToAdd = 40200; // Default values sum (20 * 100 + 40000)
 
           // Update the scoreboard with the new points
           final user = FirebaseAuth.instance.currentUser;
