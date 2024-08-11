@@ -349,7 +349,7 @@ class _CluesState extends State<Clues> {
       },
       front: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF006666),
+          color: Colors.green,
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: Stack(
@@ -555,7 +555,7 @@ class _CluesState extends State<Clues> {
       ),
       back: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF006666),
+          color: Colors.green,
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: Stack(

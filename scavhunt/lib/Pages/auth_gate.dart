@@ -53,10 +53,13 @@ class AuthGate extends StatelessWidget {
                       "850910294528-ovg72gn8s7n67pogqe9jlru2gr3v1tkd.apps.googleusercontent.com"),
             ],
             headerBuilder: (context, constraints, shrinkOffset) {
-              return Padding(
-                padding: const EdgeInsets.all(20),
-                child: AspectRatio(
-                  aspectRatio: 1,
+              return Center(
+                child: Text(
+                  'QuestSpot',
+                  style: TextStyle(
+                    fontSize: 32, // Adjust font size as needed
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               );
             },
@@ -64,8 +67,8 @@ class AuthGate extends StatelessWidget {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: action == AuthAction.signIn
-                    ? const Text('Welcome to FlutterFire, please sign in!')
-                    : const Text('Welcome to Flutterfire, please sign up!'),
+                    ? const Text('Welcome to QuestSpot, please sign in!')
+                    : const Text('Welcome to QuestSpot, please sign up!'),
               );
             },
             footerBuilder: (context, action) {
@@ -80,10 +83,6 @@ class AuthGate extends StatelessWidget {
             sideBuilder: (context, shrinkOffset) {
               return Padding(
                 padding: const EdgeInsets.all(20),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Image.asset('flutterfire_300x.png'),
-                ),
               );
             },
           );
