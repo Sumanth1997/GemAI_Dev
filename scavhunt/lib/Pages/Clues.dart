@@ -341,6 +341,7 @@ class _CluesState extends State<Clues> {
     final isAnswerSubmitted = widget.isAnswerSubmittedList.isNotEmpty &&
         widget.isAnswerSubmittedList[currentIndex - 1];
     print("Sumanth printing category ${widget.difficulty_level}");
+
     return FlipCard(
       direction: FlipDirection.HORIZONTAL,
       side: CardSide.FRONT,
@@ -443,8 +444,17 @@ class _CluesState extends State<Clues> {
                                 : () {
                                     String userAnswer = _answerController.text;
                                     String message = '';
-                                    if (userAnswer ==
-                                        widget.restaurants[currentIndex - 1]) {
+                                    String normalizedUserAnswer = userAnswer
+                                        .toLowerCase() // Convert to lowercase for case insensitivity
+                                        .replaceAll(RegExp(r'\s+'),
+                                            ''); // Remove all whitespace characters
+
+// Normalize the comparison string from the list
+                                    String normalizedTargetAnswer = widget
+                                        .restaurants[currentIndex - 1]
+                                        .toLowerCase() // Convert to lowercase for case insensitivity
+                                        .replaceAll(RegExp(r'\s+'), '');
+                                    if (normalizedUserAnswer == normalizedTargetAnswer) {
                                       setState(() {
                                         points += 100;
                                         message = 'Correct!';

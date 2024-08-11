@@ -49,7 +49,6 @@ class ThemeProvider extends ChangeNotifier {
         borderRadius: BorderRadius.circular(10), // Customize card border radius
       ),
     ),
-    dialogBackgroundColor: Color(0xFFCCD5AE),
     // ... other light theme customizations
   );
 
@@ -93,7 +92,6 @@ class ThemeProvider extends ChangeNotifier {
         borderRadius: BorderRadius.circular(10), // Customize card border radius
       ),
     ),
-    dialogBackgroundColor: Color(0xFFCCD5AE),
     // ... other dark theme customizations
   );
 

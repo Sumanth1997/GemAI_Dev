@@ -23,7 +23,7 @@ class _GridListState extends State<GridList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Clues Grid'),
+        title: const Text('Card collections'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore
