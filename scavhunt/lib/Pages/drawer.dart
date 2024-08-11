@@ -15,6 +15,7 @@ import 'package:namer_app/Pages/tracker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
 class AppDrawer extends StatefulWidget {
@@ -40,6 +41,8 @@ class _AppDrawerState extends State<AppDrawer> {
   ];
   bool _showLanguageDropdown = false; // Flag to control dropdown visibility
   bool _isDarkMode = false; // Flag to control dark mode
+  final _formKey = GlobalKey<FormState>();
+  final _apiKeyController = TextEditingController();
 
   @override
   void initState() {
@@ -146,6 +149,27 @@ class _AppDrawerState extends State<AppDrawer> {
       // Update the theme provider
       Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
     });
+  }
+
+  Future<void> _saveApiKey() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && _formKey.currentState!.validate()) {
+      final apiKey = _apiKeyController.text.trim();
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'apiKey': apiKey});
+      // Close the dialog after saving
+      Navigator.of(context).pop();
+    }
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   @override
@@ -304,6 +328,71 @@ class _AppDrawerState extends State<AppDrawer> {
                 color: _isDarkMode ?  Colors.white :Colors.black  ,
               ), onPressed: () { _toggleDarkMode(); },
             ),
+          ),
+          ListTile(
+            title: Text(
+              'API KEY',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
+            ),
+            onTap: () {
+              // Show the API key dialog when the "API KEY" ListTile is tapped
+              showDialog(
+                context: context,
+                barrierDismissible: false, // Prevent dismissing by tapping outside
+                builder: (context) => AlertDialog(
+                  title: Text(
+                    AppLocalizations.of(context)?.enterGeminiApiKey ??
+                        'Enter your Gemini API Key',
+                  ),
+                  content: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: _apiKeyController,
+                          decoration: InputDecoration(
+                            labelText: AppLocalizations.of(context)?.apiKey ??
+                                'API Key',
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppLocalizations.of(context)
+                                      ?.pleaseEnterApiKey ??
+                                  'Please enter your API Key';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // Close the dialog
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)?.close ?? 'Close',
+                              ),
+                            ),
+                            ElevatedButton(
+                              onPressed: _saveApiKey,
+                              child: Text(
+                                AppLocalizations.of(context)?.save ?? 'Save',
+                              ),
+                            ),
+                            SizedBox(width: 16), // Add some spacing between buttons
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           ListTile(
             title: Text(

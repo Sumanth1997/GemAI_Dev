@@ -1,17 +1,33 @@
 // import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+Future<String> _fetchApiKeyFromFirestore(String userId) async {
+  final firestore = FirebaseFirestore.instance;
+  final userDoc = await firestore.collection('users').doc(userId).get();
+
+  if (userDoc.exists) {
+    final apiKey = userDoc.data()?['apiKey'] as String?;
+    if (apiKey != null) {
+      return apiKey;
+    } else {
+      throw Exception('API key not found in user document');
+    }
+  } else {
+    throw Exception('User document not found');
+  }
+}
 
 
 Future<String> callGeminiForRestaurants(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -38,8 +54,11 @@ Future<String> callGeminiForRestaurants(String location) async {
 Future<String> callGeminiForClues(String responseRestaurants) async {
   try {
    
-    await dotenv.load();
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
     }
@@ -66,10 +85,11 @@ Future<String> callGeminiForCityTouristPlaces(String location) async {
   try {
     // Access your API key as an environment variable
     print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -97,11 +117,11 @@ Future<String> callGeminiForCountryTouristPlaces(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -129,11 +149,11 @@ Future<String> callGeminiForStateTouristPlaces(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -161,11 +181,11 @@ Future<String> callGeminiForContinentalTouristPlaces(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -192,8 +212,11 @@ Future<String> callGeminiForContinentalTouristPlaces(String location) async {
 Future<String> callGeminiForTouristPlacesClues(String responseRestaurants,String location) async {
   try {
    
-    await dotenv.load();
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
     }
@@ -219,11 +242,11 @@ Future<String> callGeminiForStateRestaurants(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -251,11 +274,11 @@ Future<String> callGeminiForCountryRestaurants(String country) async {
   print('Sumanth location is :$country');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
@@ -282,11 +305,11 @@ Future<String> callGeminiForContinentalRestaurants(String location) async {
   print('Sumanth location is :$location');
   try {
     // Access your API key as an environment variable
-    print("Loading .env file");
-    await dotenv.load();
-    print('Finished loading .env file.');
-
-    final apiKey = dotenv.env['API_KEY']?? '';
+   final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception('User is not logged in');
+    }
+    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
     print('Sumanth\'s API Key: $apiKey');
     if (apiKey.isEmpty) {
       throw Exception('API_KEY is not set in the .env file');
