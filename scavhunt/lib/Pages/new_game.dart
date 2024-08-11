@@ -29,7 +29,7 @@ class _NewGameState extends State<NewGame> {
   void initState() {
     super.initState();
     _checkUserAndNavigate();
-    _loadDarkMode(); 
+    _loadDarkMode();
   }
 
   Future<void> _checkUserAndNavigate() async {
@@ -47,6 +47,7 @@ class _NewGameState extends State<NewGame> {
       // If it's not a new user, you are already on the NewGame screen
     }
   }
+
   bool _isDarkMode = false;
   Future<void> _loadDarkMode() async {
     final prefs = await SharedPreferences.getInstance();
@@ -74,7 +75,7 @@ class _NewGameState extends State<NewGame> {
   @override
   Widget build(BuildContext context) {
     // final localizations = AppLocalizations.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)?.welcome ?? 'Welcome'),
@@ -94,9 +95,6 @@ class _NewGameState extends State<NewGame> {
                     title: Text(
                       AppLocalizations.of(context)?.selectCategory ??
                           'Select Category',
-                      style: TextStyle(
-                        color: _isDarkMode ? Colors.black : Colors.white,
-                      ),
                     ),
                     // backgroundColor: _isDarkMode ? Colors.black : Colors.white,
                     content: Column(
@@ -108,10 +106,9 @@ class _NewGameState extends State<NewGame> {
                             navigateToDifficultyLevel(context, 'restaurants');
                           },
                           child: Text(
-                              AppLocalizations.of(context)?.restaurants ??
-                                  'Restaurants', style: TextStyle(
-                        color: _isDarkMode ? Colors.black : Colors.white,
-                      ),),
+                            AppLocalizations.of(context)?.restaurants ??
+                                'Restaurants',
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -120,10 +117,9 @@ class _NewGameState extends State<NewGame> {
                                 context, 'Tourist Places');
                           },
                           child: Text(
-                              AppLocalizations.of(context)?.touristPlaces ??
-                                  'Tourist Places', style: TextStyle(
-                        color: _isDarkMode ? Colors.black : Colors.white,
-                      ),),
+                            AppLocalizations.of(context)?.touristPlaces ??
+                                'Tourist Places',
+                          ),
                         ),
                       ],
                     ),
