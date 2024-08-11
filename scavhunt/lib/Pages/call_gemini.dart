@@ -4,10 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 Future<String> _fetchApiKeyFromFirestore(String userId) async {
   final firestore = FirebaseFirestore.instance;
-  final userDoc = await firestore.collection('apikeys').doc('gemini').get();
+  final doc = await firestore.collection('apikeys').doc('gemini').get();
 
-  if (userDoc.exists) {
-    final apiKey = userDoc.data()?['apiKey'] as String?;
+  if (doc.exists) {
+    final apiKey = doc.data()?['apikey'] as String?;
     if (apiKey != null) {
       return apiKey;
     } else {
