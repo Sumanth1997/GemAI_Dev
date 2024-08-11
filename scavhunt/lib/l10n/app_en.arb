@@ -39,11 +39,5 @@
         "example": "42"
       }
     }
-  },
-  "enterGeminiApiKey": "Enter Gemini API key",
-  "apiKey":"API key",
-  "pleaseEnterApiKey": "Please enter your API Key",
-  "save": "Save",
-  "getApiKey": "Get API Key",
-  "close":"Close"
+  }
 }
