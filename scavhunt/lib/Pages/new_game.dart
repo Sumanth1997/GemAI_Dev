@@ -10,6 +10,8 @@ import 'package:namer_app/Pages/drawer.dart';
 import 'package:namer_app/Pages/join_game.dart';
 import 'package:namer_app/Pages/profile_setup.dart';
 import 'package:namer_app/Pages/public_hunts.dart';
+import 'package:namer_app/Pages/theme.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localization.dart';
 
@@ -27,6 +29,7 @@ class _NewGameState extends State<NewGame> {
   void initState() {
     super.initState();
     _checkUserAndNavigate();
+    _loadDarkMode();
   }
 
   Future<void> _checkUserAndNavigate() async {
@@ -45,115 +48,158 @@ class _NewGameState extends State<NewGame> {
     }
   }
 
+  bool _isDarkMode = false;
+  Future<void> _loadDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    });
+  }
+
+  // Save dark mode preference to SharedPreferences
+  Future<void> _saveDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isDarkMode', _isDarkMode);
+  }
+
+  // Toggle dark mode
+  void _toggleDarkMode() {
+    setState(() {
+      _isDarkMode = !_isDarkMode;
+      _saveDarkMode();
+      // Update the theme provider
+      Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final localizations = AppLocalizations.of(context);
+  // final localizations = AppLocalizations.of(context);
+  final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)?.welcome ?? 'Welcome'),
-        centerTitle: true,
-      ),
-      drawer: AppDrawer(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                // Show a dialog or navigate to select between 'restaurants' and 'Tourist Places'
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(AppLocalizations.of(context)?.selectCategory ??
-                        'Select Category'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context); // Close dialog
-                            navigateToDifficultyLevel(context, 'restaurants');
-                          },
-                          child: Text(
-                              AppLocalizations.of(context)?.restaurants ??
-                                  'Restaurants'),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context); // Close dialog
-                            navigateToDifficultyLevel(
-                                context, 'Tourist Places');
-                          },
-                          child: Text(
-                              AppLocalizations.of(context)?.touristPlaces ??
-                                  'Tourist Places'),
-                        ),
-                      ],
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(AppLocalizations.of(context)?.welcome ?? 'Welcome'),
+      centerTitle: true,
+    ),
+    drawer: AppDrawer(),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () {
+              // Show a dialog or navigate to select between 'restaurants' and 'Tourist Places'
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text(
+                    AppLocalizations.of(context)?.selectCategory ??
+                        'Select Category',
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black,
                     ),
                   ),
-                );
-              },
-              child: Text(
-                AppLocalizations.of(context)?.startNewGame ?? 'Start New Game',
-              ),
-            ),
-            const SizedBox(height: 20), // Add some spacing between buttons
-            // In new_game.dart
-
-            ElevatedButton(
-              onPressed: () async {
-                await _loadAndNavigateToClues(context);
-              },
-              child:
-                  Text(AppLocalizations.of(context)?.loadGame ?? 'Load Game'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        CreateHunt(), // Replace LoadGame with your actual widget
+                  backgroundColor: isDarkMode ? Colors.black : Colors.white,
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close dialog
+                          navigateToDifficultyLevel(context, 'restaurants');
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)?.restaurants ??
+                              'Restaurants',
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.black : Colors.white,
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Close dialog
+                          navigateToDifficultyLevel(
+                              context, 'Tourist Places');
+                        },
+                        child: Text(
+                          AppLocalizations.of(context)?.touristPlaces ??
+                              'Tourist Places',
+                          style: TextStyle(
+                            color: isDarkMode ? Colors.black : Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Text(
-                  AppLocalizations.of(context)?.createHunt ?? 'Create Hunt'),
+                ),
+              );
+            },
+            child: Text(
+              AppLocalizations.of(context)?.startNewGame ?? 'Start New Game',
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        PublicHunt(), // Replace LoadGame with your actual widget
-                  ),
-                );
-              },
-              child: Text(
-                  AppLocalizations.of(context)?.publicHunts ?? 'Public Hunts'),
+          ),
+          const SizedBox(height: 20), // Add some spacing between buttons
+          
+          ElevatedButton(
+            onPressed: () async {
+              await _loadAndNavigateToClues(context);
+            },
+            child: Text(
+              AppLocalizations.of(context)?.loadGame ?? 'Load Game',
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => JoinGame(),
-                  ),
-                );
-              },
-              child:
-                  Text(AppLocalizations.of(context)?.joinGame ?? 'Join Game'),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      CreateHunt(), // Replace LoadGame with your actual widget
+                ),
+              );
+            },
+            child: Text(
+              AppLocalizations.of(context)?.createHunt ?? 'Create Hunt',
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      PublicHunt(), // Replace LoadGame with your actual widget
+                ),
+              );
+            },
+            child: Text(
+              AppLocalizations.of(context)?.publicHunts ?? 'Public Hunts',
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => JoinGame(),
+                ),
+              );
+            },
+            child: Text(
+              AppLocalizations.of(context)?.joinGame ?? 'Join Game',
+            ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Future<void> _loadAndNavigateToClues(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();

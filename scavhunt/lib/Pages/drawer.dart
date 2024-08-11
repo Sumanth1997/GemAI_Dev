@@ -151,8 +151,7 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final email =
-        user?.email ?? 'No email'; // Get email or default to 'No email'
+    final email = user?.email ?? 'No email'; // Get email or default to 'No email'
 
     return Drawer(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -164,8 +163,7 @@ class _AppDrawerState extends State<AppDrawer> {
               color: Theme.of(context).appBarTheme.backgroundColor,
             ),
             accountName: Padding(
-              padding:
-                  const EdgeInsets.only(top: 35.0), // Increased top padding
+              padding: const EdgeInsets.only(top: 35.0), // Increased top padding
               child: Text(
                 'John Doe',
                 style: TextStyle(
@@ -195,8 +193,7 @@ class _AppDrawerState extends State<AppDrawer> {
               child: CircleAvatar(
                 backgroundImage: _profileImageUrl != null
                     ? NetworkImage(_profileImageUrl!)
-                    : AssetImage('images/avatar.png')
-                        as ImageProvider<Object>, // Use NetworkImage if URL exists
+                    : AssetImage('images/avatar.png') as ImageProvider<Object>,
               ),
             ),
           ),
@@ -217,6 +214,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.heatMap ?? 'Heat Map',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
             onTap: () {
               Navigator.push(
@@ -228,6 +228,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.scoreboard ?? 'Scoreboard',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
             onTap: () {
               Navigator.push(
@@ -239,6 +242,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.friends ?? 'Friends',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
             onTap: () {
               Navigator.push(
@@ -253,10 +259,10 @@ class _AppDrawerState extends State<AppDrawer> {
               style: TextStyle(
                 color: _isDarkMode ? Colors.white : Colors.black,
               ),
-            ), // Display selected language
+            ),
             onTap: () {
               setState(() {
-                _showLanguageDropdown = !_showLanguageDropdown; // Toggle dropdown
+                _showLanguageDropdown = !_showLanguageDropdown;
               });
             },
             trailing: _showLanguageDropdown
@@ -279,7 +285,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         _saveSelectedLanguage(); // Save the selected language
                         _showLanguageDropdown = false;
                         Provider.of<LocaleProvider>(context, listen: false)
-                            .setLocale(newValue); // Hide dropdown after selection
+                            .setLocale(newValue);
                       });
                     },
                   )
@@ -287,38 +293,32 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           ListTile(
             title: Text(
-              AppLocalizations.of(context)?.logout ?? 'Scoreboard',
+              'Dark Mode',
               style: TextStyle(
                 color: _isDarkMode ? Colors.white : Colors.black,
               ),
             ),
-            leading: Icon(
-              Icons.logout,
-              color: _isDarkMode ? Colors.white : Colors.black,
+            trailing: IconButton(
+              icon: Icon(
+                _isDarkMode ? Icons.brightness_7 : Icons.brightness_4,
+                color: _isDarkMode ?  Colors.white :Colors.black  ,
+              ), onPressed: () { _toggleDarkMode(); },
+            ),
+          ),
+          ListTile(
+            title: Text(
+              AppLocalizations.of(context)?.logout ?? 'Logout',
+              style: TextStyle(
+                color: _isDarkMode ? Colors.white : Colors.black,
+              ),
             ),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
-              Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => AuthGate()),
               );
             },
-          ),
-          ListTile(
-            title: Text(
-              _isDarkMode ? 'Light Mode' : 'Dark Mode',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
-            ), // Toggle text based on dark mode
-            trailing: IconButton(
-              icon: Icon(
-                _isDarkMode ? Icons.brightness_7 : Icons.brightness_4,
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
-              onPressed: _toggleDarkMode,
-            ),
           ),
         ],
       ),

@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 class ThemeProvider extends ChangeNotifier {
   bool _isDarkMode =  MediaQueryData.fromWindow(WidgetsBinding.instance.window).platformBrightness == Brightness.dark; // Initialize based on device brightness
-
+  bool get isDarkMode => _isDarkMode;
   // Define color schemes for light and dark mode
   ThemeData get lightTheme => ThemeData(
     brightness: Brightness.light,
@@ -30,19 +30,20 @@ class ThemeProvider extends ChangeNotifier {
         textStyle: TextStyle(
           fontSize: 16
         ),
+        color: Colors.black,
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: Color(0xFFE0E5B6), // Customize button background color
         textStyle: TextStyle(
-          color:Colors.white, 
+          color:Colors.black,
           fontWeight: FontWeight.bold,// Customize button text color
         ),
       ),
     ),
     cardTheme: CardTheme(
-      color: Colors.white, // Customize card background color
+      color: Colors.black,// Customize card background color
       elevation: 2, // Customize card elevation
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10), // Customize card border radius
@@ -81,7 +82,7 @@ class ThemeProvider extends ChangeNotifier {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom( // Customize button background color
         textStyle: TextStyle(
-          color: Color(0xFFC84B31), // Customize button text color
+          color: Colors.black,// Customize button text color
         ),
       ),
     ),
