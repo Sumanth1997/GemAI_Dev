@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:namer_app/Pages/add_friends.dart';
 import 'package:namer_app/Pages/auth_gate.dart';
 import 'package:namer_app/Pages/grid_list.dart';
-import 'package:namer_app/Pages/main.dart';
+import 'package:namer_app/main.dart';
 import 'package:namer_app/Pages/scoreboard.dart';
 import 'package:namer_app/Pages/theme.dart';
 import 'package:namer_app/Pages/tracker.dart';
