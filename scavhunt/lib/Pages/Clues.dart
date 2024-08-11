@@ -138,7 +138,6 @@ class _CluesState extends State<Clues> {
       backgroundColor: Theme.of(context)
           .scaffoldBackgroundColor, // Apply theme background color
       appBar: AppBar(
-        title: Text('FlipCard'),
         actions: [
           IconButton(
             onPressed: () {

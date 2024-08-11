@@ -13,7 +13,7 @@ class ThemeProvider extends ChangeNotifier {
     appBarTheme: AppBarTheme(
       backgroundColor: Color(0xFFCCD5AE), // Customize app bar background
       titleTextStyle: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
         fontWeight: FontWeight.bold, // Customize app bar title text color
         fontSize: 20, // Customize app bar title font size
       ),
@@ -35,6 +35,7 @@ class ThemeProvider extends ChangeNotifier {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.black,
         backgroundColor: Color(0xFFE0E5B6), // Customize button background color
         textStyle: TextStyle(
           color:Colors.black,
@@ -80,7 +81,9 @@ class ThemeProvider extends ChangeNotifier {
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom( // Customize button background color
+      style: ElevatedButton.styleFrom( 
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black,// Customize button background color
         textStyle: TextStyle(
           color: Colors.black,// Customize button text color
         ),

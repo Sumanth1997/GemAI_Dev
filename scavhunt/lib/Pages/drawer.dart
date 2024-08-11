@@ -43,6 +43,7 @@ class _AppDrawerState extends State<AppDrawer> {
   bool _isDarkMode = false; // Flag to control dark mode
   final _formKey = GlobalKey<FormState>();
   final _apiKeyController = TextEditingController();
+  String? _displayName; // Variable to store the display name
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class _AppDrawerState extends State<AppDrawer> {
     _loadProfileImage(); // Load the profile image when the widget initializes
     _loadSelectedLanguage(); // Load the selected language from SharedPreferences
     _loadDarkMode(); // Load dark mode preference
+    _fetchDisplayName(); // Fetch the display name from Firestore
   }
 
   Future<void> _fetchPoints() async {
@@ -172,6 +174,27 @@ class _AppDrawerState extends State<AppDrawer> {
     }
   }
 
+  // Fetch the display name from Firestore
+  Future<void> _fetchDisplayName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (snapshot.exists) {
+          setState(() {
+            _displayName = snapshot.data()?['displayName'];
+          });
+        }
+      } catch (e) {
+        print('Error fetching display name: $e');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -189,7 +212,7 @@ class _AppDrawerState extends State<AppDrawer> {
             accountName: Padding(
               padding: const EdgeInsets.only(top: 35.0), // Increased top padding
               child: Text(
-                'John Doe',
+                _displayName ?? 'John Doe', // Use the fetched display name
                 style: TextStyle(
                   color: _isDarkMode ? Colors.white : Colors.black,
                 ),
@@ -217,7 +240,8 @@ class _AppDrawerState extends State<AppDrawer> {
               child: CircleAvatar(
                 backgroundImage: _profileImageUrl != null
                     ? NetworkImage(_profileImageUrl!)
-                    : AssetImage('images/avatar.png') as ImageProvider<Object>,
+                    : null, // Remove AssetImage('images/avatar.png')
+                // If no profile image is available, the CircleAvatar will be empty
               ),
             ),
           ),

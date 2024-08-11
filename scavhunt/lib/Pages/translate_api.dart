@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'package:html_unescape/html_unescape.dart';
 
@@ -17,13 +17,17 @@ class TranslateApi {
 
   static Future<void> init() async {
     if (!_initialized) {
-      // Load the .env file
-      await dotenv.load();
+      // Fetch the API key from Firestore
+      final firestore = FirebaseFirestore.instance;
+      final doc = await firestore.collection('apikeys').doc('translation').get();
+      if (doc.exists) {
+        apiKey = doc.data()?['apikey'] as String;
+      } else {
+        throw Exception('API key not found in Firestore');
+      }
 
-      // Get the API key from the .env file
-      apiKey = dotenv.env['TRANSLATE_API'] ?? '';
       if (apiKey.isEmpty) {
-        throw Exception('TRANSLATE_API is not set in the .env file');
+        throw Exception('API_KEY is not set in Firestore');
       }
       _initialized = true;
     }
