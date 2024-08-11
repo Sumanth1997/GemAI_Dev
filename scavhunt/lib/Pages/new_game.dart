@@ -98,7 +98,7 @@ class _NewGameState extends State<NewGame> {
                         color: _isDarkMode ? Colors.black : Colors.white,
                       ),
                     ),
-                    backgroundColor: _isDarkMode ? Colors.black : Colors.white,
+                    // backgroundColor: _isDarkMode ? Colors.black : Colors.white,
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
