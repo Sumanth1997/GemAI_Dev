@@ -128,7 +128,7 @@ class _TrackerState extends State<Tracker> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tracker'),
+        title: const Text('Heat Map'),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
