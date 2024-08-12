@@ -198,7 +198,8 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final email = user?.email ?? 'No email'; // Get email or default to 'No email'
+    final email =
+        user?.email ?? 'No email'; // Get email or default to 'No email'
 
     return Drawer(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -210,11 +211,13 @@ class _AppDrawerState extends State<AppDrawer> {
               color: Theme.of(context).appBarTheme.backgroundColor,
             ),
             accountName: Padding(
-              padding: const EdgeInsets.only(top: 35.0), // Increased top padding
+              padding:
+                  const EdgeInsets.only(top: 35.0), // Increased top padding
               child: Text(
                 _displayName ?? 'John Doe', // Use the fetched display name
                 style: TextStyle(
-                  color: _isDarkMode ? Colors.white : Colors.black,
+                  color:
+                      Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white,
                 ),
               ),
             ),
@@ -224,13 +227,13 @@ class _AppDrawerState extends State<AppDrawer> {
                 Text(
                   email,
                   style: TextStyle(
-                    color: _isDarkMode ? Colors.white : Colors.black,
+                    color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white,
                   ),
                 ),
                 Text(
                   'Points: $currentPoints',
                   style: TextStyle(
-                    color: _isDarkMode ? Colors.white : Colors.black,
+                    color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.white,
                   ),
                 ),
               ],
@@ -349,7 +352,10 @@ class _AppDrawerState extends State<AppDrawer> {
             trailing: IconButton(
               icon: Icon(
                 _isDarkMode ? Icons.brightness_7 : Icons.brightness_4,
-              ), onPressed: () { _toggleDarkMode(); },
+              ),
+              onPressed: () {
+                _toggleDarkMode();
+              },
             ),
           ),
           ListTile(
