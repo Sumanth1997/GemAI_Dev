@@ -24,12 +24,12 @@
   "cardCollection": "Card Collection",
   "heatMap": "Heat Map",
   "scoreboard": "Scoreboard",
-  "friends":"Friends",
+  "friends": "Friends",
   "logout": "Logout",
   "touristPlaces": "Tourist Places",
   "selectCategory": "Select Category",
   "chooseDifficultyLevel": "Choose Difficulty Level",
-  "restaurants":"Restaurants",
+  "restaurants": "Restaurants",
   "points": "Points: {currentPoints}",
   "@points": {
     "description": "Points display",
@@ -39,5 +39,16 @@
         "example": "42"
       }
     }
-  }
+  },
+  "virtualVoyage": "Virtual Voyage",
+  "virtualVoyageDescription": "Play at home, discover digital treasures.",
+  "cityCoveCaper": "City Cove Caper",
+  "cityCoveCaperDescription": "Uncover hidden treasures within your city limits.",
+  "stateSecretSearch": "State Secret Search",
+  "stateSecretSearchDescription": "Uncover mysteries within your state.",
+  "nationNauticalNightmare": "Nation Nautical Nightmare",
+  "nationNauticalNightmareDescription": "Conquer challenges across the country.",
+  "worldWindWander": "World Wind Wander",
+  "worldWindWanderDescription": "Embark on a global adventure.",
+  "theme" : "Theme"
 }

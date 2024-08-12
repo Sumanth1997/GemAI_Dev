@@ -24,5 +24,16 @@
     "scoreboard": "Marcador",
     "friends": "Amigos",
     "logout": "Cerrar sesión",
-    "points":"Puntos: {currentPoints}"
+    "points":"Puntos: {currentPoints}",
+     "virtualVoyage": "Viaje virtual",
+  "virtualVoyageDescription": "Juega en casa, descubre tesoros digitales.",
+  "cityCoveCaper": "Alcaparra de la cala de la ciudad",
+  "cityCoveCaperDescription": "Descubre tesoros escondidos dentro de los límites de tu ciudad.",
+  "stateSecretSearch": "Búsqueda de secreto de estado",
+  "stateSecretSearchDescription": "Descubre misterios dentro de tu estado.",
+  "nationNauticalNightmare": "Pesadilla náutica de la nación",
+  "nationNauticalNightmareDescription": "Conquista desafíos en todo el país.",
+  "worldWindWander": "Paseo por el viento mundial",
+  "worldWindWanderDescription": "Embárcate en una aventura global.",
+  "theme" : "Tema"
 }

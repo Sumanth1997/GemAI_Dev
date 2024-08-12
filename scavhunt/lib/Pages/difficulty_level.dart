@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/Pages/Location_Print.dart'; // Import your LocationPrint widget
 import 'package:namer_app/Pages/drawer.dart';
-import 'package:flutter_gen/gen_l10n/app_localization.dart';
+import 'package:flutter_gen/gen_l10n/app_localization.dart'; // Correct import
 
 class DifficultyLevel extends StatelessWidget {
-  const DifficultyLevel({Key? key, required this.category});
+  const DifficultyLevel({Key? key, required this.category}) : super(key: key);
 
   final String category;
 
@@ -12,44 +12,40 @@ class DifficultyLevel extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> itemData = [
       {
-        'text': 'Virtual Voyage',
-        'description': 'Play at home, discover digital treasures..',
+        'textKey': 'virtualVoyage', // Translation key
+        'descriptionKey': 'virtualVoyageDescription', // Translation key for description
         'cardColor': Colors.brown, // Bronze
       },
       {
-        'text': 'City Cove Caper',
-        'description': 'Uncover hidden treasures within your city limits.',
+        'textKey': 'cityCoveCaper', // Translation key
+        'descriptionKey': 'cityCoveCaperDescription', // Translation key for description
         'cardColor': const Color.fromARGB(255, 189, 189, 189), // Silver
       },
       {
-        'text': 'State Secret Search',
-        'description': 'Uncover mysteries within your state.',
+        'textKey': 'stateSecretSearch', // Translation key
+        'descriptionKey': 'stateSecretSearchDescription', // Translation key for description
         'cardColor': Colors.amber, // Gold
       },
       {
-        'text': 'Nation Nautical Nightmare',
-        'description': 'Conquer challenges across the country.',
+        'textKey': 'nationNauticalNightmare', // Translation key
+        'descriptionKey': 'nationNauticalNightmareDescription', // Translation key for description
         'cardColor': Colors.lightBlueAccent, // Diamond (light blue)
       },
       {
-        'text': 'World Wind Wander',
-        'description': 'Embark on a global adventure.',
+        'textKey': 'worldWindWander', // Translation key
+        'descriptionKey': 'worldWindWanderDescription', // Translation key for description
         'cardColor': Color.fromARGB(255, 238, 5, 5), // Obsidian
       },
       // Add more items as needed
     ];
 
-    final TextStyle itemTextStyle = TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.bold,
-      color: Colors.white,
-    );
+    final localizations = AppLocalizations.of(context);
 
     return Scaffold(
-      resizeToAvoidBottomInset : false,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)?.chooseDifficultyLevel ?? 'Choose Difficulty Level',
+          localizations?.chooseDifficultyLevel ?? 'Choose Difficulty Level',
           style: TextStyle(color: Colors.white),
         ),
         automaticallyImplyLeading: false,
@@ -68,16 +64,23 @@ class DifficultyLevel extends StatelessWidget {
       drawer: AppDrawer(),
       body: Column(
         children: itemData.map((item) {
+          final String text = _getLocalizedString(localizations, item['textKey']);
+          final String description = _getLocalizedString(localizations, item['descriptionKey']);
+
           return Flexible(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: ItemWidget(
-                text: item['text'],
-                description: item['description'], // Pass the description
-                textStyle: itemTextStyle,
+                text: text,
+                description: description,
+                textStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
                 cardColor: item['cardColor'],
                 onTap: () {
-                  navigateToLocationPrint(context, item['text']);
+                  navigateToLocationPrint(context, item['textKey']);
                 },
               ),
             ),
@@ -87,12 +90,39 @@ class DifficultyLevel extends StatelessWidget {
     );
   }
 
-  void navigateToLocationPrint(BuildContext context, String selectedText) {
+  String _getLocalizedString(AppLocalizations? localizations, String key) {
+    switch (key) {
+      case 'virtualVoyage':
+        return localizations?.virtualVoyage ?? key;
+      case 'virtualVoyageDescription':
+        return localizations?.virtualVoyageDescription ?? key;
+      case 'cityCoveCaper':
+        return localizations?.cityCoveCaper ?? key;
+      case 'cityCoveCaperDescription':
+        return localizations?.cityCoveCaperDescription ?? key;
+      case 'stateSecretSearch':
+        return localizations?.stateSecretSearch ?? key;
+      case 'stateSecretSearchDescription':
+        return localizations?.stateSecretSearchDescription ?? key;
+      case 'nationNauticalNightmare':
+        return localizations?.nationNauticalNightmare ?? key;
+      case 'nationNauticalNightmareDescription':
+        return localizations?.nationNauticalNightmareDescription ?? key;
+      case 'worldWindWander':
+        return localizations?.worldWindWander ?? key;
+      case 'worldWindWanderDescription':
+        return localizations?.worldWindWanderDescription ?? key;
+      default:
+        return key; // Fallback to the key if no matching localization is found
+    }
+  }
+
+  void navigateToLocationPrint(BuildContext context, String selectedTextKey) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => LocationScreen(
-          selectedText: selectedText,
+          selectedText: selectedTextKey,
           category: category,
         ),
       ),

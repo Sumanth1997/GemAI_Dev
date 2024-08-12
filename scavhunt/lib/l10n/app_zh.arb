@@ -24,5 +24,16 @@
     "scoreboard": "记分牌",
     "friends": "朋友们",
     "logout": "登出",
-    "points":"积分: {currentPoints}"
+    "points":"积分: {currentPoints}",
+     "virtualVoyage": "虚拟航行",
+  "virtualVoyageDescription": "在家玩，发现数字宝藏。",
+  "cityCoveCaper": "城市湾斗篷",
+  "cityCoveCaperDescription": "发现城市范围内隐藏的宝藏。",
+  "stateSecretSearch": "国家秘密搜查",
+  "stateSecretSearchDescription": "揭开你所在州的秘密。",
+  "nationNauticalNightmare": "国家航海噩梦",
+  "nationNauticalNightmareDescription": "克服全国各地的挑战。",
+  "worldWindWander": "世界风行",
+  "worldWindWanderDescription": "踏上全球冒险之旅。",
+  "theme" :"主题"
 }

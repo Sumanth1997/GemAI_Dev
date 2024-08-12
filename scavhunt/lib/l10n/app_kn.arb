@@ -15,5 +15,16 @@
     "scoreboard": "ಅಂಕಪಟ್ಟಿ",
     "friends": "ಸ್ನೇಹಿತರು",
     "logout": "ಲಾಗ್ ಔಟ್",
-    "points":"ಅಂಕಗಳು: {currentPoints}"
+    "points":"ಅಂಕಗಳು: {currentPoints}",
+    "virtualVoyage": "ವರ್ಚುವಲ್ ಪ್ರಯಾಣ",
+  "virtualVoyageDescription": "ಮನೆಯಲ್ಲಿ ಆಟವಾಡಿ, ಡಿಜಿಟಲ್ ಸಂಪತ್ತನ್ನು ಅನ್ವೇಷಿಸಿ.",
+  "cityCoveCaper": "ಸಿಟಿ ಕೋವ್ ಕೇಪರ್",
+  "cityCoveCaperDescription": "ನಿಮ್ಮ ನಗರ ಮಿತಿಯಲ್ಲಿ ಗುಪ್ತ ನಿಧಿಗಳನ್ನು ಬಹಿರಂಗಪಡಿಸಿ.",
+  "stateSecretSearch": "ರಾಜ್ಯ ರಹಸ್ಯ ಹುಡುಕಾಟ",
+  "stateSecretSearchDescription": "ನಿಮ್ಮ ರಾಜ್ಯದೊಳಗಿನ ರಹಸ್ಯಗಳನ್ನು ಬಹಿರಂಗಪಡಿಸಿ.",
+  "nationNauticalNightmare": "ನೇಷನ್ ನಾಟಿಕಲ್ ನೈಟ್ಮೇರ್",
+  "nationNauticalNightmareDescription": "ದೇಶಾದ್ಯಂತ ಸವಾಲುಗಳನ್ನು ಜಯಿಸಿ.",
+  "worldWindWander": "ವರ್ಲ್ಡ್ ವಿಂಡ್ ವಾಂಡರ್",
+  "worldWindWanderDescription": "ಜಾಗತಿಕ ಸಾಹಸವನ್ನು ಪ್ರಾರಂಭಿಸಿ.",
+  "theme" : "Theme"
 }

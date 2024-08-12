@@ -24,5 +24,16 @@
     "scoreboard": "スコアボード",
     "friends": "友達",
     "logout": "ログアウト",
-    "points":"ポイント: {currentPoints}"
+    "points":"ポイント: {currentPoints}",
+     "virtualVoyage": "仮想航海",
+  "virtualVoyageDescription": "家で遊んで、デジタルの宝物を見つけてください。",
+  "cityCoveCaper": "シティ コーブ ケイパー",
+  "cityCoveCaperDescription": "あなたの街の境界内に隠された宝物を発見してください。",
+  "stateSecretSearch": "国家機密の調査",
+  "stateSecretSearchDescription": "自分の州内の謎を解き明かしましょう。",
+  "nationNauticalNightmare": "ネイション・ノーティカル・ナイトメア",
+  "nationNauticalNightmareDescription": "全国各地の課題を克服します。",
+  "worldWindWander": "ワールドウィンドワンダー",
+  "worldWindWanderDescription": "世界規模の冒険に乗り出しましょう",
+  "theme" : "テーマ"
 }

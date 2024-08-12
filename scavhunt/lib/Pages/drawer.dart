@@ -344,7 +344,7 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           ListTile(
             title: Text(
-              'Theme',
+              AppLocalizations.of(context)?.theme ?? 'Theme',
               // style: TextStyle(
               //   color: _isDarkMode ? Colors.white : Colors.black,
               // ),

@@ -24,5 +24,16 @@
     "scoreboard": "Anzeigetafel",
     "friends": "Freunde",
     "logout": "Ausloggen",
-    "points":"Punkte: {currentPoints}"
+    "points":"Punkte: {currentPoints}",
+    "virtualVoyage": "Virtuelle Reise",
+  "virtualVoyageDescription": "Zu Hause spielen, digitale Schätze entdecken.",
+  "cityCoveCaper": "City Cove Caper",
+  "cityCoveCaperDescription": "Entdecken Sie verborgene Schätze innerhalb Ihrer Stadtgrenzen.",
+  "stateSecretSearch": "Suche nach Staatsgeheimnissen",
+  "stateSecretSearchDescription": "Entdecken Sie Geheimnisse in Ihrem Staat.",
+  "nationNauticalNightmare": "Nation Nautischer Albtraum",
+  "nationNauticalNightmareDescription": "Meistern Sie Herausforderungen im ganzen Land.",
+  "worldWindWander": "Weltwindwanderung",
+  "worldWindWanderDescription": "Begeben Sie sich auf ein globales Abenteuer.",
+  "theme" : "ಥೀಮ್"
 }

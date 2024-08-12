@@ -24,5 +24,16 @@
     "scoreboard": "Табло",
     "friends": "Друзья",
     "logout": "Выйти",
-    "points":"Точки: {currentPoints}"
+    "points":"Точки: {currentPoints}",
+     "virtualVoyage": "Виртуальное путешествие",
+  "virtualVoyageDescription": "Играйте дома, открывайте цифровые сокровища.",
+  "cityCoveCaper": "Городская бухта Капер",
+  "cityCoveCaperDescription": "Найдите спрятанные сокровища в пределах вашего города.",
+  "stateSecretSearch": "Поиск государственной тайны",
+  "stateSecretSearchDescription": "Раскройте тайны вашего штата.",
+  "nationNauticalNightmare": "Морской кошмар нации",
+  "nationNauticalNightmareDescription": "Морской кошмар нации",
+  "worldWindWander": "Мировое путешествие по ветру",
+  "worldWindWanderDescription": "Отправьтесь в глобальное приключение.",
+  "theme" : "Тема"
 }

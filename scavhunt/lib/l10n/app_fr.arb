@@ -24,5 +24,16 @@
     "scoreboard": "Tableau de bord",
     "friends": "Amis",
     "logout": "Se déconnecter",
-    "points":"les points: {currentPoints}"
+    "points":"les points: {currentPoints}",
+     "virtualVoyage": "Voyage virtuel",
+  "virtualVoyageDescription": "Jouez à la maison, découvrez des trésors numériques.",
+  "cityCoveCaper": "Câpre de City Cove",
+  "cityCoveCaperDescription": "Découvrez des trésors cachés dans les limites de votre ville.",
+  "stateSecretSearch": "Recherche de secrets d'État",
+  "stateSecretSearchDescription": "Découvrez les mystères de votre état.",
+  "nationNauticalNightmare": "Cauchemar nautique de la nation",
+  "nationNauticalNightmareDescription": "Relevez les défis à travers le pays.",
+  "worldWindWander": "Voyage du vent dans le monde",
+  "worldWindWanderDescription": "Embarquez pour une aventure mondiale.",
+  "theme" : "Thème"
 }
