@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:namer_app/Pages/drawer.dart';
 
-class ChooseCity extends StatelessWidget {
-  const ChooseCity({super.key});
+class chooseCity extends StatelessWidget {
+  const chooseCity({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_breaks
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -75,6 +77,7 @@ class LocaleProvider extends ChangeNotifier {
     switch (languageCode) {
       case 'English':
         _locale = const Locale('en');
+       
         break;
       case 'Kannada':
         _locale = const Locale('kn');

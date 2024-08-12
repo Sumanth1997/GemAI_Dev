@@ -18,7 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:namer_app/Pages/drawer.dart';
-import 'package:namer_app/Pages/main.dart';
+import 'package:namer_app/main.dart';
 import 'package:namer_app/Pages/new_game.dart';
 import 'package:namer_app/Pages/translate_api.dart';
 import 'package:provider/provider.dart';
