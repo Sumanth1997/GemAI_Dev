@@ -248,9 +248,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.cardCollection ?? 'Card Collection',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             onTap: () {
               Navigator.push(
@@ -262,9 +262,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.heatMap ?? 'Heat Map',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             onTap: () {
               Navigator.push(
@@ -276,9 +276,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.scoreboard ?? 'Scoreboard',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             onTap: () {
               Navigator.push(
@@ -290,9 +290,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.friends ?? 'Friends',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             onTap: () {
               Navigator.push(
@@ -304,9 +304,9 @@ class _AppDrawerState extends State<AppDrawer> {
           ListTile(
             title: Text(
               'App Language: $_selectedLanguage',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             onTap: () {
               setState(() {
@@ -321,9 +321,9 @@ class _AppDrawerState extends State<AppDrawer> {
                         value: language,
                         child: Text(
                           language,
-                          style: TextStyle(
-                            color: _isDarkMode ? Colors.white : Colors.black,
-                          ),
+                          // style: TextStyle(
+                          //   color: _isDarkMode ? Colors.white : Colors.black,
+                          // ),
                         ),
                       );
                     }).toList(),
@@ -341,24 +341,23 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           ListTile(
             title: Text(
-              'Dark Mode',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              'Theme',
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             trailing: IconButton(
               icon: Icon(
                 _isDarkMode ? Icons.brightness_7 : Icons.brightness_4,
-                color: _isDarkMode ?  Colors.white :Colors.black  ,
               ), onPressed: () { _toggleDarkMode(); },
             ),
           ),
           ListTile(
             title: Text(
               AppLocalizations.of(context)?.logout ?? 'Logout',
-              style: TextStyle(
-                color: _isDarkMode ? Colors.white : Colors.black,
-              ),
+              // style: TextStyle(
+              //   color: _isDarkMode ? Colors.white : Colors.black,
+              // ),
             ),
             onTap: () async {
               await FirebaseAuth.instance.signOut();
