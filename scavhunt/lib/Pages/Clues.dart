@@ -349,7 +349,7 @@ class _CluesState extends State<Clues> {
       },
       front: Container(
         decoration: BoxDecoration(
-          color: Colors.green,
+          color: Colors.amber.shade400,
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: Stack(
@@ -446,8 +446,6 @@ class _CluesState extends State<Clues> {
                                         .toLowerCase() // Convert to lowercase for case insensitivity
                                         .replaceAll(RegExp(r'\s+'),
                                             ''); // Remove all whitespace characters
-
-// Normalize the comparison string from the list
                                     String normalizedTargetAnswer = widget
                                         .restaurants[currentIndex - 1]
                                         .toLowerCase() // Convert to lowercase for case insensitivity
@@ -555,7 +553,7 @@ class _CluesState extends State<Clues> {
       ),
       back: Container(
         decoration: BoxDecoration(
-          color: Colors.green,
+          color: Colors.amber.shade400,
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         ),
         child: Stack(
@@ -661,15 +659,17 @@ class _CluesState extends State<Clues> {
   }
 
   Future<void> _pickImage(String restaurant, int currentIndex) async {
-    print("Loading .env file");
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      throw Exception('User is not logged in');
-    }
-    final apiKey = await _fetchApiKeyFromFirestore(user.uid);
-    print('Sumanth\'s API Key: $apiKey');
-    if (apiKey.isEmpty) {
-      throw Exception('API_KEY is not set in the .env file');
+    // Initialize Firestore instance
+    final firestore = FirebaseFirestore.instance;
+
+    // Fetch the API key from Firestore
+    final doc = await firestore.collection('apikeys').doc('gemini').get();
+    String? apiKey;
+
+    if (doc.exists) {
+      apiKey = doc.data()?['apikey'] as String?;
+    } else {
+      throw Exception('API key not found in Firestore document');
     }
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
@@ -689,7 +689,7 @@ class _CluesState extends State<Clues> {
     }
     final imageBytes = await File(pickedFile!.path).readAsBytes();
     String? verifyImage =
-        await _VerifyImage(currentIndex, restaurant, imageBytes, apiKey);
+        await _VerifyImage(currentIndex, restaurant, imageBytes, apiKey!);
     print("Sumanth after calling verifyImage");
     print("Sumanth printing Verify image response |$verifyImage|");
     String cleanedVerifyImage = verifyImage!.replaceAll(RegExp(r'[^\w]'), '');
@@ -727,17 +727,19 @@ class _CluesState extends State<Clues> {
 
   Future<String> _UploadReceipt(int currentIndex, String restaurant) async {
     try {
-      // Load the .env file
+      // Initialize Firestore instance
+      final firestore = FirebaseFirestore.instance;
 
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception('User is not logged in');
+      // Fetch the API key from Firestore
+      final doc = await firestore.collection('apikeys').doc('gemini').get();
+      String? apiKey;
+
+      if (doc.exists) {
+        apiKey = doc.data()?['apikey'] as String?;
+      } else {
+        throw Exception('API key not found in Firestore document');
       }
-      final apiKey = await _fetchApiKeyFromFirestore(user.uid);
-      print('Sumanth\'s API Key: $apiKey');
-      if (apiKey.isEmpty) {
-        throw Exception('API_KEY is not set in the .env file');
-      }
+
       final ImagePicker _picker = ImagePicker();
 
       // Pick an image from the gallery
@@ -751,7 +753,7 @@ class _CluesState extends State<Clues> {
       final imageBytes = await File(pickedFile.path).readAsBytes();
       print("Sumanth before calling verifyImage");
       String? verifyImage =
-          await _VerifyImage(currentIndex, restaurant, imageBytes, apiKey);
+          await _VerifyImage(currentIndex, restaurant, imageBytes, apiKey!);
       print("Sumanth after calling verifyImage");
       print("Sumanth printing Verify image response |$verifyImage|");
       String cleanedVerifyImage = verifyImage!.replaceAll(RegExp(r'[^\w]'), '');
@@ -834,7 +836,7 @@ class _CluesState extends State<Clues> {
 
       // Create the prompt
       final prompt = TextPart(
-          "In the attached image, do you see the word Fort Wayn Halal? Answer yes or no. Response must not contain any full stop.");
+          "In the attached image, do you see the word $restaurant? Answer yes or no. Response must not contain any full stop.");
 
       final response = await model.generateContent([
         Content.multi([

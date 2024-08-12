@@ -13,27 +13,32 @@ class DifficultyLevel extends StatelessWidget {
     final List<Map<String, dynamic>> itemData = [
       {
         'textKey': 'virtualVoyage', // Translation key
-        'descriptionKey': 'virtualVoyageDescription', // Translation key for description
+        'descriptionKey':
+            'virtualVoyageDescription', // Translation key for description
         'cardColor': Colors.brown, // Bronze
       },
       {
         'textKey': 'cityCoveCaper', // Translation key
-        'descriptionKey': 'cityCoveCaperDescription', // Translation key for description
+        'descriptionKey':
+            'cityCoveCaperDescription', // Translation key for description
         'cardColor': const Color.fromARGB(255, 189, 189, 189), // Silver
       },
       {
         'textKey': 'stateSecretSearch', // Translation key
-        'descriptionKey': 'stateSecretSearchDescription', // Translation key for description
+        'descriptionKey':
+            'stateSecretSearchDescription', // Translation key for description
         'cardColor': Colors.amber, // Gold
       },
       {
         'textKey': 'nationNauticalNightmare', // Translation key
-        'descriptionKey': 'nationNauticalNightmareDescription', // Translation key for description
+        'descriptionKey':
+            'nationNauticalNightmareDescription', // Translation key for description
         'cardColor': Colors.lightBlueAccent, // Diamond (light blue)
       },
       {
         'textKey': 'worldWindWander', // Translation key
-        'descriptionKey': 'worldWindWanderDescription', // Translation key for description
+        'descriptionKey':
+            'worldWindWanderDescription', // Translation key for description
         'cardColor': Color.fromARGB(255, 238, 5, 5), // Obsidian
       },
       // Add more items as needed
@@ -64,8 +69,10 @@ class DifficultyLevel extends StatelessWidget {
       drawer: AppDrawer(),
       body: Column(
         children: itemData.map((item) {
-          final String text = _getLocalizedString(localizations, item['textKey']);
-          final String description = _getLocalizedString(localizations, item['descriptionKey']);
+          final String text =
+              _getLocalizedString(localizations, item['textKey']);
+          final String description =
+              _getLocalizedString(localizations, item['descriptionKey']);
 
           return Flexible(
             child: Padding(
@@ -118,11 +125,36 @@ class DifficultyLevel extends StatelessWidget {
   }
 
   void navigateToLocationPrint(BuildContext context, String selectedTextKey) {
+    print(
+        "Sumanth printing $selectedTextKey & $category before calling location print");
+    var difficultyLevel;
+    switch (selectedTextKey) {
+      case 'virtualVoyage':
+        difficultyLevel = 'Virtual Voyage';
+        break;
+      case 'cityCoveCaper':
+        difficultyLevel = 'City Cove Caper';
+        break;
+      case 'stateSecretSearch':
+        difficultyLevel = 'State Secret Search';
+        break;
+      case 'nationNauticalNightmare':
+        difficultyLevel = 'Nation Nautical Nightmare';
+        break;
+      case 'worldWindWander':
+        difficultyLevel = 'World Wind Wander';
+        break;
+
+      default:
+        difficultyLevel = 'Virtual Voyage';
+        break;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => LocationScreen(
-          selectedText: selectedTextKey,
+          selectedText: difficultyLevel,
           category: category,
         ),
       ),
