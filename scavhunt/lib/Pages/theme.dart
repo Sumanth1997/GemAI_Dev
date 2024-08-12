@@ -70,13 +70,13 @@ class ThemeProvider extends ChangeNotifier {
         textStyle: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
       bodyLarge: GoogleFonts.openSans(
         textStyle: TextStyle(
           fontSize: 16,
-          color: Colors.black,
+          color: Colors.white,
         ),
       ),
     ),
@@ -85,7 +85,7 @@ class ThemeProvider extends ChangeNotifier {
         foregroundColor: Colors.white,
         backgroundColor: Colors.black,// Customize button background color
         textStyle: TextStyle(
-          color: Colors.black,// Customize button text color
+          color: Colors.white,// Customize button text color
         ),
       ),
     ),
