@@ -1,4 +1,110 @@
-# GemAI_Dev
+# QuestSpot: Decode the clues, discover the world #buildwithgemini 🌍🕹️
 
-This is a Flutter application to play a game similar to a scavenger or treasure hunt, where players must guess a set of 10 restaurants or tourist places based on three clues provided for each location. The game requires access to the player's device location and features different difficulty levels: "Virtual Voyage" (playable from home), "City Code Cape" (within the city of the player's device location), "State Secret Search" (within the state of the device location), "National Nautical Nightmare" (within the country), and "World Wind Wander" (anywhere in the world). Upon correctly guessing each restaurant or tourist place, players earn 100 points. Additionally, players can upload a copy of a receipt from the restaurant or tourist place, which will be analyzed by the Gemini API. The postal code and total price on the receipt will then be added as points. Players can also take a picture of the restaurant or tourist place to save it as a souvenir trading card, displaying the place name and date, which will be shown under "Card Collections" in the app menu. If Gemini detects that the image contains text with the name of the restaurant or tourist place, players will receive a bonus of 10,000 points, ensuring they are physically present at the location.
-The app has been translated into eight languages: English, Kannada, Spanish, Chinese, French, German, Russian, and Japanese. Static texts have been translated using an ARB file and localization, while the Google Translation API is used to translate the dynamically generated clues into any of these languages. However, currently, answers must be provided in English. The app also features a heatmap similar to those found on platforms like GitHub or LeetCode, which uses different colors to indicate the number of guesses players make. Other functionalities include the ability to load a game to resume from where it was left off. Players can also share a game with friends using a game ID that is copied to the clipboard when the share button is clicked. Friends can then join the same game using the "Join Game" option. Additionally, anyone can create a game for any location and provide their own clues, which can later be played by anyone globally under the "Public Hunts" option. The app also displays a scoreboard, which is currently a prototype but has the potential to be connected with Google Play Services in the future. The app offers both dark and light themes and is currently available for Android and iOS devices. I have tested the clue generation for various cities, including New Delhi, Fort Wayne (USA), Paris, Sydney, Cairo, and São Paulo, and the clues are generating perfectly. Using Gemini has made it possible to play this game anywhere in the world; without Gemini, it would have been a tedious task to create clues for cities, states, and countries worldwide.
+## Overview
+
+QuestSpot is an innovative Flutter-based mobile application that transforms geographical exploration into an exciting treasure hunt game. Players guess locations through clever clues, earn points, and collect unique souvenir cards while discovering restaurants and tourist destinations worldwide.
+
+## 🎮 Game Modes
+
+The game offers five distinct difficulty levels:
+- **Virtual Voyage**: Play from home
+- **City Code Cape**: Explore within your city
+- **State Secret Search**: Discover locations in your state
+- **National Nautical Nightmare**: Challenge across your country
+- **World Wind Wander**: Global exploration adventure
+
+## 🌟 Key Features
+
+### Location Guessing
+- Guess 10 restaurants or tourist places using three strategic clues
+- 100 points awarded for each correct guess
+
+### Receipt Validation
+- Upload restaurant receipts for point verification
+- Gemini API analyzes receipts
+- Postal code and total price contribute to player's score
+
+### Souvenir Trading Cards
+- Capture images of discovered locations
+- Create personalized trading cards with place name and date
+- View collected cards in "Card Collections"
+
+### Bonus Point System
+- 10,000 bonus points if Gemini detects location name in the image
+- Ensures players are physically present at the location
+
+## 🌐 Multilingual Support
+Supported Languages:
+- English
+- Kannada
+- Spanish
+- Chinese
+- French
+- German
+- Russian
+- Japanese
+
+### Translation Features
+- Static texts translated using ARB files and localization
+- Dynamic clues translated via Google Translation API
+- Note: Answers currently require English input
+
+## 🎨 Additional Features
+- Heatmap displaying player guess statistics
+- Game resumption functionality
+- Shareable game IDs
+- Multiplayer game joining
+- Public game creation
+- Prototype global scoreboard
+- Dark and light themes
+
+## 📱 Platform Support
+- Android
+- iOS
+
+## 🛠️ Technologies Used
+- Flutter
+- Gemini API
+- Google Translation API
+- Localization
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Flutter SDK
+- Android Studio / Xcode
+- Gemini API Key
+- Google Translation API Key
+
+### Installation
+1. Clone the repository
+   ```bash
+   git clone https://github.com/Sumanth1997/GemAI_Dev.git
+   ```
+2. Install dependencies
+   ```bash
+   flutter pub get
+   ```
+3. Configure API keys
+4. Run the application
+   ```bash
+   flutter run
+   ```
+
+## 🔮 Future Roadmap
+- Integration with Google Play Services
+- Expanded language support
+- Enhanced multiplayer features
+- Advanced scoreboard functionality
+
+## 🤝 Contributing
+Contributions, issues, and feature requests are welcome!
+
+## 📄 License
+[Add your license information here]
+
+## 👨‍💻 Author
+Sumanth (GitHub: @Sumanth1997)
+
+## 📞 Support
+For issues or inquiries, please open a GitHub issue or contact the repository maintainer.
